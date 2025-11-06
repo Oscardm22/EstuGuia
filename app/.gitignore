@@ -1,0 +1,7 @@
+/build
+*.apk
+*.aar
+*.ap_
+*.aab
+output.json
+/release
