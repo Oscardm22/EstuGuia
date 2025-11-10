@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
+import com.oscardm22.estuguia.presentation.features.auth.ui.components.error.AuthErrorHandler
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -27,6 +28,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
     private val formValidator = AuthFormValidator()
+    private lateinit var errorHandler: AuthErrorHandler
 
     private lateinit var nameEditText: TextInputEditText
     private lateinit var emailEditText: TextInputEditText
@@ -61,6 +63,8 @@ class RegisterActivity : AppCompatActivity() {
         setupObservers()
         setupClickListeners()
         setupTextWatchers()
+
+        errorHandler = AuthErrorHandler(this)
     }
 
     private fun initializeViews() {
@@ -250,29 +254,14 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun showError(message: String?) {
-        val errorMessage = when {
-            message == null -> getString(R.string.error_unknown)
-            message.contains("email address is already in use", ignoreCase = true) -> {
-                "Este correo electrónico ya está registrado. ¿Quieres iniciar sesión?"
-            }
-            message.contains("network", ignoreCase = true) -> {
-                "Error de conexión. Verifica tu internet e intenta nuevamente."
-            }
-            message.contains("invalid email", ignoreCase = true) -> {
-                "El formato del correo electrónico no es válido."
-            }
-            message.contains("weak password", ignoreCase = true) -> {
-                "La contraseña es demasiado débil. Usa al menos 6 caracteres."
-            }
-            else -> message
-        }
+        val errorMessage = errorHandler.handleRegistrationError(message)
 
         errorTextView.text = errorMessage
         errorTextView.visibility = View.VISIBLE
 
         errorTextView.postDelayed({
             errorTextView.visibility = View.GONE
-        }, 7000) // 7 segundos para mensajes importantes
+        }, 7000)
     }
 
     private fun hideErrors() {

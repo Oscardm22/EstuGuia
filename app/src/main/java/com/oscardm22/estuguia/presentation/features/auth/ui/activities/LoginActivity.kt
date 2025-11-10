@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
+import com.oscardm22.estuguia.presentation.features.auth.ui.components.error.AuthErrorHandler
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.core.view.isVisible
@@ -27,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
     private val formValidator = AuthFormValidator()
+    private lateinit var errorHandler: AuthErrorHandler
 
     private lateinit var emailEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
@@ -55,6 +57,8 @@ class LoginActivity : AppCompatActivity() {
         setupObservers()
         setupClickListeners()
         setupTextWatchers()
+
+        errorHandler = AuthErrorHandler(this)
     }
 
     private fun initializeViews() {
@@ -159,10 +163,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showError(message: String) {
-        errorTextView.text = message
+        val errorMessage = errorHandler.handleLoginError(message)
+
+        errorTextView.text = errorMessage
         errorTextView.visibility = View.VISIBLE
 
-        // Ocultar error después de 5 segundos
         errorTextView.postDelayed({
             errorTextView.visibility = View.GONE
         }, 5000)
