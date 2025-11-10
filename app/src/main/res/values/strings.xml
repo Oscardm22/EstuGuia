@@ -13,6 +13,19 @@
     <string name="no_account">¿No tienes cuenta?</string>
     <string name="register_here">Regístrate aquí</string>
 
+    <!-- Register Screen -->
+    <string name="create_account">Crear Cuenta</string>
+    <string name="register_subtitle">Regístrate para comenzar</string>
+    <string name="full_name">Nombre completo</string>
+    <string name="confirm_password">Confirmar contraseña</string>
+    <string name="register_button">Registrarse</string>
+    <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="select_grade">Selecciona tu grado</string>
+
+    <!-- Validaciones -->
+    <string name="error_name_required">Ingresa tu nombre completo</string>
+    <string name="error_passwords_not_match">Las contraseñas no coinciden</string>
+
     <!-- Mensajes de error -->
     <string name="error_invalid_email">Ingresa un email válido</string>
     <string name="error_short_password">La contraseña debe tener al menos 6 caracteres</string>
@@ -20,7 +33,10 @@
     <string name="error_complete_fields">Por favor completa todos los campos</string>
 
     <!-- Mensajes de navegación -->
-    <string name="login_success">✅ Login exitoso!</string>
-    <string name="navigate_register">📝 Navegar a registro</string>
-    <string name="navigate_forgot_password">🔑 Navegar a recuperación</string>
+    <string name="login_success">Login exitoso!</string>
+    <string name="navigate_register">Navegar a registro</string>
+    <string name="navigate_forgot_password">Navegar a recuperación</string>
+
+    <!-- Register Messages -->
+    <string name="register_success">✅ Registro exitoso!</string>
 </resources>
