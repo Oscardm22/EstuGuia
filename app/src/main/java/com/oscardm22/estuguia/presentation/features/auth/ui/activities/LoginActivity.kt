@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
@@ -31,6 +32,9 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
+        // Forzar color de íconos blancos en la barra de estado
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -38,11 +42,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         initializeViews()
-
         setupObservers()
-
         setupClickListeners()
     }
+
+
 
     private fun initializeViews() {
         emailEditText = findViewById(R.id.emailEditText)
