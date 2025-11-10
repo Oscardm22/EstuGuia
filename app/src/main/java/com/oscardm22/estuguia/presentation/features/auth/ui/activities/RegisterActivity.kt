@@ -1,6 +1,5 @@
 package com.oscardm22.estuguia.presentation.features.auth.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -18,6 +17,7 @@ import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.error.AuthErrorHandler
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.input.InputFieldManager
+import com.oscardm22.estuguia.core.navigation.AuthNavigation
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -29,6 +29,7 @@ class RegisterActivity : AppCompatActivity() {
     private val formValidator = AuthFormValidator()
     private lateinit var errorHandler: AuthErrorHandler
     private val inputManager = InputFieldManager()
+    private lateinit var authNavigation: AuthNavigation
 
     private lateinit var nameEditText: TextInputEditText
     private lateinit var emailEditText: TextInputEditText
@@ -65,6 +66,7 @@ class RegisterActivity : AppCompatActivity() {
         setupTextWatchers()
 
         errorHandler = AuthErrorHandler(this)
+        authNavigation = AuthNavigation(this)
     }
 
     private fun initializeViews() {
@@ -252,14 +254,11 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun navigateToMain() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-        finish()
+        authNavigation.navigateToMain()
     }
 
     private fun navigateToLogin() {
-        finish()
+        authNavigation.navigateToLogin()
     }
 
     override fun onDestroy() {

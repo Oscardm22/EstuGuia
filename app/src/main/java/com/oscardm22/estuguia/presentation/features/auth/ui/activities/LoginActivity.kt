@@ -1,11 +1,9 @@
 package com.oscardm22.estuguia.presentation.features.auth.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +16,7 @@ import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.error.AuthErrorHandler
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.input.InputFieldManager
+import com.oscardm22.estuguia.core.navigation.AuthNavigation
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private val formValidator = AuthFormValidator()
     private lateinit var errorHandler: AuthErrorHandler
     private val inputManager = InputFieldManager()
+    private lateinit var authNavigation: AuthNavigation
 
     private lateinit var emailEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
@@ -58,6 +58,7 @@ class LoginActivity : AppCompatActivity() {
         setupTextWatchers()
 
         errorHandler = AuthErrorHandler(this)
+        authNavigation = AuthNavigation(this)
     }
 
     private fun initializeViews() {
@@ -163,20 +164,15 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToMain() {
-        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-        // TODO: Implementar navegación a MainActivity
-        // startActivity(Intent(this, MainActivity::class.java))
-        // finish()
+        authNavigation.navigateToMain()
     }
 
     private fun navigateToRegister() {
-        startActivity(Intent(this, RegisterActivity::class.java))
+        authNavigation.navigateToRegister()
     }
 
     private fun navigateToForgotPassword() {
-        Toast.makeText(this, getString(R.string.navigate_forgot_password), Toast.LENGTH_SHORT).show()
-        // TODO: Implementar navegación a ForgotPasswordActivity
-        // startActivity(Intent(this, ForgotPasswordActivity::class.java))
+        authNavigation.navigateToForgotPassword()
     }
 
     override fun onDestroy() {
