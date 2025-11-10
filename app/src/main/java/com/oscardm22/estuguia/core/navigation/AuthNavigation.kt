@@ -10,7 +10,6 @@ import com.oscardm22.estuguia.presentation.features.auth.ui.activities.RegisterA
 /**
  * Maneja toda la navegación entre pantallas de autenticación
  * Centraliza intents, flags y transiciones
- * Ubicado en core/navigation porque la navegación es transversal a múltiples features
  */
 class AuthNavigation(private val context: Context) {
 
@@ -48,7 +47,6 @@ class AuthNavigation(private val context: Context) {
 
     /**
      * Navega a la pantalla principal de la app (después del login exitoso)
-     * TODO: Reemplazar con MainActivity cuando esté implementada
      */
     fun navigateToMain() {
         // Por ahora navega al Login como placeholder
@@ -65,7 +63,6 @@ class AuthNavigation(private val context: Context) {
 
     /**
      * Navega a la pantalla de recuperación de contraseña
-     * TODO: Implementar cuando se cree ForgotPasswordActivity
      */
     fun navigateToForgotPassword() {
         // Placeholder por ahora
