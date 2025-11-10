@@ -17,6 +17,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.oscardm22.estuguia.R
+import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -25,6 +26,7 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView
 class RegisterActivity : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
+    private val formValidator = AuthFormValidator()
 
     private lateinit var nameEditText: TextInputEditText
     private lateinit var emailEditText: TextInputEditText
@@ -150,7 +152,19 @@ class RegisterActivity : AppCompatActivity() {
             val confirmPassword = confirmPasswordEditText.text?.toString() ?: ""
             val grade = extractGradeFromSelection(gradeSpinner.text?.toString()?.trim() ?: "")
 
-            if (validateForm(name, email, password, confirmPassword, grade)) {
+            if (formValidator.validateRegisterForm(
+                    name = name,
+                    email = email,
+                    password = password,
+                    confirmPassword = confirmPassword,
+                    grade = grade,
+                    nameLayout = nameInputLayout,
+                    emailLayout = emailInputLayout,
+                    passwordLayout = passwordInputLayout,
+                    confirmPasswordLayout = confirmPasswordInputLayout,
+                    gradeLayout = gradeInputLayout
+                )
+            ) {
                 viewModel.register(email, password, name, grade)
             }
         }
@@ -233,60 +247,6 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    private fun validateForm(name: String, email: String, password: String, confirmPassword: String, grade: String): Boolean {
-        var isValid = true
-
-        // Validar nombre
-        if (name.isEmpty()) {
-            nameInputLayout.error = getString(R.string.error_name_required)
-            isValid = false
-        } else {
-            nameInputLayout.error = null
-        }
-
-        // Validar email
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailInputLayout.error = getString(R.string.error_invalid_email)
-            isValid = false
-        } else {
-            emailInputLayout.error = null
-        }
-
-        // Validar contraseña
-        if (password.isEmpty() || password.length < 6) {
-            passwordInputLayout.error = getString(R.string.error_short_password)
-            isValid = false
-        } else {
-            passwordInputLayout.error = null
-        }
-
-        // Validar confirmación de contraseña
-        if (confirmPassword.isEmpty() || password != confirmPassword) {
-            confirmPasswordInputLayout.error = getString(R.string.error_passwords_not_match)
-            isValid = false
-        } else {
-            confirmPasswordInputLayout.error = null
-        }
-
-        // Validar grado
-        if (grade.isEmpty()) {
-            gradeInputLayout.error = "Selecciona tu grado académico"
-            isValid = false
-        } else if (!isValidGrade(grade)) {
-            gradeInputLayout.error = "Grado no válido. Selecciona una opción de la lista"
-            isValid = false
-        } else {
-            gradeInputLayout.error = null
-        }
-
-        return isValid
-    }
-
-    private fun isValidGrade(grade: String): Boolean {
-        val validGrades = listOf("1ero", "2do", "3ero", "4to", "5to")
-        return validGrades.any { it.equals(grade, ignoreCase = true) }
     }
 
     private fun showError(message: String?) {

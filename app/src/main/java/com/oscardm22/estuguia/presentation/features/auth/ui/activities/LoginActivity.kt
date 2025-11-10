@@ -17,6 +17,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.oscardm22.estuguia.R
+import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.core.view.isVisible
@@ -25,6 +26,7 @@ import androidx.core.view.isVisible
 class LoginActivity : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
+    private val formValidator = AuthFormValidator()
 
     private lateinit var emailEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
@@ -99,8 +101,18 @@ class LoginActivity : AppCompatActivity() {
             val email = emailEditText.text?.toString()?.trim() ?: ""
             val password = passwordEditText.text?.toString() ?: ""
 
-            if (validateForm(email, password)) {
+            if (formValidator.validateLoginForm(
+                    email = email,
+                    password = password,
+                    emailLayout = emailInputLayout,
+                    passwordLayout = passwordInputLayout
+                )
+            ) {
                 viewModel.login(email, password)
+            } else {
+                // Mostrar error general si la validación falla
+                errorTextView.text = getString(R.string.error_complete_fields)
+                errorTextView.visibility = View.VISIBLE
             }
         }
 
@@ -144,34 +156,6 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-    private fun validateForm(email: String, password: String): Boolean {
-        var isValid = true
-
-        // Validar email
-        if (email.isEmpty()) {
-            emailInputLayout.error = getString(R.string.error_complete_fields)
-            isValid = false
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailInputLayout.error = getString(R.string.error_invalid_email)
-            isValid = false
-        } else {
-            emailInputLayout.error = null
-        }
-
-        // Validar contraseña
-        if (password.isEmpty()) {
-            passwordInputLayout.error = getString(R.string.error_complete_fields)
-            isValid = false
-        } else if (password.length < 6) {
-            passwordInputLayout.error = getString(R.string.error_short_password)
-            isValid = false
-        } else {
-            passwordInputLayout.error = null
-        }
-
-        return isValid
     }
 
     private fun showError(message: String) {
