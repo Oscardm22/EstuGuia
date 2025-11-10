@@ -2,8 +2,6 @@ package com.oscardm22.estuguia.presentation.features.auth.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -19,9 +17,9 @@ import com.google.android.material.textfield.TextInputLayout
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.error.AuthErrorHandler
+import com.oscardm22.estuguia.presentation.features.auth.ui.components.input.InputFieldManager
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.core.view.isVisible
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -29,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private val viewModel: AuthViewModel by viewModels()
     private val formValidator = AuthFormValidator()
     private lateinit var errorHandler: AuthErrorHandler
+    private val inputManager = InputFieldManager()
 
     private lateinit var emailEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
@@ -130,36 +129,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun setupTextWatchers() {
-        // Listener para el campo de email
-        emailEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                // Limpiar error cuando el usuario comienza a escribir
-                if (emailInputLayout.error != null) {
-                    emailInputLayout.error = null
-                }
-                // También limpiar el error general si existe
-                if (errorTextView.isVisible) {
-                    errorTextView.visibility = View.GONE
-                }
-            }
-        })
 
-        // Listener para el campo de contraseña
-        passwordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (passwordInputLayout.error != null) {
-                    passwordInputLayout.error = null
-                }
-                // También limpiar el error general si existe
-                if (errorTextView.isVisible) {
-                    errorTextView.visibility = View.GONE
-                }
-            }
-        })
+        // Para campos normales (email)
+        inputManager.setupErrorClearingWatcher(
+            editText = emailEditText,
+            inputLayout = emailInputLayout,
+            errorTextView = errorTextView
+        )
+
+        // Para campo de contraseña
+        inputManager.setupErrorClearingWatcher(
+            editText = passwordEditText,
+            inputLayout = passwordInputLayout,
+            errorTextView = errorTextView
+        )
     }
 
     private fun showError(message: String) {

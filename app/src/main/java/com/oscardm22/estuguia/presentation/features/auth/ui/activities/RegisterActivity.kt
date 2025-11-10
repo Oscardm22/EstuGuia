@@ -2,8 +2,6 @@ package com.oscardm22.estuguia.presentation.features.auth.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
@@ -19,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.form.AuthFormValidator
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.error.AuthErrorHandler
+import com.oscardm22.estuguia.presentation.features.auth.ui.components.input.InputFieldManager
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -29,6 +28,7 @@ class RegisterActivity : AppCompatActivity() {
     private val viewModel: AuthViewModel by viewModels()
     private val formValidator = AuthFormValidator()
     private lateinit var errorHandler: AuthErrorHandler
+    private val inputManager = InputFieldManager()
 
     private lateinit var nameEditText: TextInputEditText
     private lateinit var emailEditText: TextInputEditText
@@ -195,62 +195,40 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun setupTextWatchers() {
-        // Listener para el campo de nombre
-        nameEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (nameInputLayout.error != null) {
-                    nameInputLayout.error = null
-                }
-            }
-        })
 
-        // Listener para el campo de email
-        emailEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (emailInputLayout.error != null) {
-                    emailInputLayout.error = null
-                }
-            }
-        })
+        val fields = listOf(
+            InputFieldManager.FieldConfig(
+                editText = nameEditText,
+                inputLayout = nameInputLayout
+            ),
+            InputFieldManager.FieldConfig(
+                editText = emailEditText,
+                inputLayout = emailInputLayout
+            ),
+            InputFieldManager.FieldConfig(
+                editText = passwordEditText,
+                inputLayout = passwordInputLayout,
+                isPasswordField = true,
+                relatedEditText = confirmPasswordEditText,
+                relatedInputLayout = confirmPasswordInputLayout
+            ),
+            InputFieldManager.FieldConfig(
+                editText = confirmPasswordEditText,
+                inputLayout = confirmPasswordInputLayout
+            )
+        )
 
-        // Listener para el campo de contraseña
-        passwordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (passwordInputLayout.error != null) {
-                    passwordInputLayout.error = null
-                }
-                if (confirmPasswordInputLayout.error != null && confirmPasswordEditText.text?.isNotEmpty() == true) {
-                    confirmPasswordInputLayout.error = null
-                }
-            }
-        })
+        inputManager.setupMultipleFields(
+            fields = fields,
+            errorTextView = errorTextView
+        )
 
-        // Listener para el campo de confirmar contraseña
-        confirmPasswordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (confirmPasswordInputLayout.error != null) {
-                    confirmPasswordInputLayout.error = null
-                }
-            }
-        })
-
-        gradeSpinner.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                if (gradeInputLayout.error != null) {
-                    gradeInputLayout.error = null
-                }
-            }
-        })
+        // Configurar el spinner por separado
+        inputManager.setupErrorClearingWatcher(
+            editText = gradeSpinner,
+            inputLayout = gradeInputLayout,
+            errorTextView = errorTextView
+        )
     }
 
     private fun showError(message: String?) {
