@@ -1,3 +1,26 @@
 <resources>
-    <string name="app_name">EstuGuia</string>
+    <string name="app_name">EstuGuía</string>
+
+    <!-- Login Screen -->
+    <string name="welcome_title">Bienvenido a EstuGuía</string>
+    <string name="login_subtitle">Inicia sesión en tu cuenta</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="login_button">Iniciar Sesión</string>
+    <string name="loading">Cargando…</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="or_text">o</string>
+    <string name="no_account">¿No tienes cuenta?</string>
+    <string name="register_here">Regístrate aquí</string>
+
+    <!-- Mensajes de error -->
+    <string name="error_invalid_email">Ingresa un email válido</string>
+    <string name="error_short_password">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="error_complete_fields">Por favor completa todos los campos</string>
+
+    <!-- Mensajes de navegación -->
+    <string name="login_success">✅ Login exitoso!</string>
+    <string name="navigate_register">📝 Navegar a registro</string>
+    <string name="navigate_forgot_password">🔑 Navegar a recuperación</string>
 </resources>

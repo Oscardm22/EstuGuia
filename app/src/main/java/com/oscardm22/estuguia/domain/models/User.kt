@@ -7,9 +7,9 @@ data class User(
     val id: String,
     val email: String,
     val name: String,
-    val grade: String,           // Ej: "1ero", "2do", "3ero" de secundaria
-    val section: String? = null, // Ej: "A", "B", "C"
-    val school: String? = null,  // Nombre del colegio
+    val grade: String,
+    val section: String? = null,
+    val school: String? = null,
     val profileImage: String? = null,
     val createdAt: Long = System.currentTimeMillis(),
     val isEmailVerified: Boolean = false

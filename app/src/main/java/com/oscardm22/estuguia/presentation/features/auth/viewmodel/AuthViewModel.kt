@@ -1,15 +1,12 @@
 package com.oscardm22.estuguia.presentation.features.auth.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.asLiveData
 import com.oscardm22.estuguia.domain.usecases.LoginUseCase
 import com.oscardm22.estuguia.domain.usecases.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,22 +15,17 @@ class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
+    // LiveData para estados de Login y Registro
+    private val _loginState = MutableLiveData(LoginState())
+    val loginStateLiveData: LiveData<LoginState> = _loginState
 
-    // 🎯 StateFlow para Compose - REVERTIDO A StateFlow
-    private val _loginState = MutableStateFlow(LoginState())
-    val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+    private val _registerState = MutableLiveData(RegisterState())
+    val registerStateLiveData: LiveData<RegisterState> = _registerState
 
-    private val _registerState = MutableStateFlow(RegisterState())
-    val registerState: StateFlow<RegisterState> = _registerState.asStateFlow()
+    private val _isLoading = MutableLiveData(false)
+    val isLoadingLiveData: LiveData<Boolean> = _isLoading
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
-
-    // 🎯 LiveData adapters para Activities nativas - NUEVO
-    val loginStateLiveData: LiveData<LoginState> = _loginState.asLiveData()
-    val isLoadingLiveData: LiveData<Boolean> = _isLoading.asLiveData()
-
-    // 🔐 Métodos de Login
+    // Métodos de Login
     fun login(email: String, password: String) {
         _isLoading.value = true
         _loginState.value = LoginState(isLoading = true)
@@ -59,7 +51,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // 📝 Métodos de Registro
+    // Métodos de Registro
     fun register(
         email: String,
         password: String,
@@ -92,7 +84,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // 🧹 Métodos para limpiar estados
+    // Métodos para limpiar estados
     fun clearLoginState() {
         _loginState.value = LoginState()
     }
@@ -101,7 +93,7 @@ class AuthViewModel @Inject constructor(
         _registerState.value = RegisterState()
     }
 
-    // 🔄 Resetear todos los estados
+    // Resetear todos los estados
     fun resetAllStates() {
         _loginState.value = LoginState()
         _registerState.value = RegisterState()

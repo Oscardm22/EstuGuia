@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface AuthRepository {
 
-    // 🔐 Operaciones de Autenticación
+    // Operaciones de Autenticación
 
     /**
      * Iniciar sesión con email y contraseña

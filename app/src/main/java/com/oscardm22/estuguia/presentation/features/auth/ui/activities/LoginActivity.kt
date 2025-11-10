@@ -3,6 +3,7 @@ package com.oscardm22.estuguia.presentation.features.auth.ui.activities
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,13 @@ class LoginActivity : AppCompatActivity() {
 
     private val viewModel: AuthViewModel by viewModels()
 
+    private lateinit var emailEditText: TextInputEditText
+    private lateinit var passwordEditText: TextInputEditText
+    private lateinit var loginButton: Button
+    private lateinit var errorTextView: TextView
+    private lateinit var forgotPasswordText: TextView
+    private lateinit var registerText: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -29,35 +37,41 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // 🔥 INICIALIZAR VIEWS
-        val emailEditText = findViewById<TextInputEditText>(R.id.emailEditText)
-        val passwordEditText = findViewById<TextInputEditText>(R.id.passwordEditText)
-        val loginButton = findViewById<Button>(R.id.loginButton)
-        val errorTextView = findViewById<TextView>(R.id.errorTextView)
-        val forgotPasswordText = findViewById<TextView>(R.id.forgotPasswordText)
-        val registerText = findViewById<TextView>(R.id.registerText)
+        initializeViews()
 
-        // 🔥 OBSERVAR VIEWMODEL - USAR LOS LIVEDATA ADAPTERS
+        setupObservers()
+
+        setupClickListeners()
+    }
+
+    private fun initializeViews() {
+        emailEditText = findViewById(R.id.emailEditText)
+        passwordEditText = findViewById(R.id.passwordEditText)
+        loginButton = findViewById(R.id.loginButton)
+        errorTextView = findViewById(R.id.errorTextView)
+        forgotPasswordText = findViewById(R.id.forgotPasswordText)
+        registerText = findViewById(R.id.registerText)
+    }
+
+    private fun setupObservers() {
         viewModel.loginStateLiveData.observe(this) { state ->
             if (state.isLoading) {
-                loginButton.text = "Cargando..."
+                loginButton.text = getString(R.string.loading)
                 loginButton.isEnabled = false
             } else {
-                loginButton.text = "Iniciar Sesión"
+                loginButton.text = getString(R.string.login_button)
                 loginButton.isEnabled = true
             }
 
             if (state.isError) {
-                errorTextView.text = state.errorMessage
+                errorTextView.text = state.errorMessage ?: getString(R.string.error_unknown)
                 errorTextView.visibility = TextView.VISIBLE
             } else {
                 errorTextView.visibility = TextView.GONE
             }
 
             if (state.isSuccess) {
-                // Navegar al dashboard (implementar después)
-                // startActivity(Intent(this, DashboardActivity::class.java))
-                // finish()
+                navigateToMain()
             }
         }
 
@@ -66,14 +80,15 @@ class LoginActivity : AppCompatActivity() {
             emailEditText.isEnabled = !isLoading
             passwordEditText.isEnabled = !isLoading
         }
+    }
 
-        // 🔥 CONFIGURAR BOTÓN LOGIN
+    private fun setupClickListeners() {
         loginButton.setOnClickListener {
-            val email = emailEditText.text?.toString() ?: ""
+            val email = emailEditText.text?.toString()?.trim() ?: ""
             val password = passwordEditText.text?.toString() ?: ""
 
             if (email.isBlank() || password.isBlank()) {
-                errorTextView.text = "Por favor completa todos los campos"
+                errorTextView.text = getString(R.string.error_complete_fields)
                 errorTextView.visibility = TextView.VISIBLE
                 return@setOnClickListener
             }
@@ -81,15 +96,31 @@ class LoginActivity : AppCompatActivity() {
             viewModel.login(email, password)
         }
 
-        // 🔥 CONFIGURAR OTROS BOTONES (placeholder por ahora)
         forgotPasswordText.setOnClickListener {
-            // Navegar a recuperación de contraseña (implementar después)
-            // startActivity(Intent(this, ForgotPasswordActivity::class.java))
+            navigateToForgotPassword()
         }
 
         registerText.setOnClickListener {
-            // Navegar a registro (implementar después)
-            // startActivity(Intent(this, RegisterActivity::class.java))
+            navigateToRegister()
         }
+    }
+
+    private fun navigateToMain() {
+        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+        // TODO: Implementar navegación a MainActivity
+        // startActivity(Intent(this, MainActivity::class.java))
+        // finish()
+    }
+
+    private fun navigateToRegister() {
+        Toast.makeText(this, getString(R.string.navigate_register), Toast.LENGTH_SHORT).show()
+        // TODO: Implementar navegación a RegisterActivity
+        // startActivity(Intent(this, RegisterActivity::class.java))
+    }
+
+    private fun navigateToForgotPassword() {
+        Toast.makeText(this, getString(R.string.navigate_forgot_password), Toast.LENGTH_SHORT).show()
+        // TODO: Implementar navegación a ForgotPasswordActivity
+        // startActivity(Intent(this, ForgotPasswordActivity::class.java))
     }
 }

@@ -45,7 +45,6 @@ class LoginUseCase @Inject constructor(
                 isValid = false,
                 errorMessage = "El formato del email no es válido"
             )
-            // Podríamos agregar validación para emails educativos
             else -> ValidationResult(isValid = true)
         }
     }
@@ -68,8 +67,7 @@ class LoginUseCase @Inject constructor(
     }
 
     /**
-     * Verifica si hay un usuario autenticado actualmente
-     * Útil para redirigir automáticamente si ya está logueado
+      Verifica si hay un usuario autenticado actualmente
      */
     suspend fun isUserAlreadyLoggedIn(): Boolean {
         return authRepository.isUserLoggedIn()
