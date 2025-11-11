@@ -1,12 +1,13 @@
 package com.oscardm22.estuguia.core.navigation
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
-import com.oscardm22.estuguia.R
+import androidx.core.app.ActivityOptionsCompat
 import com.oscardm22.estuguia.presentation.features.auth.ui.activities.ForgotPasswordActivity
 import com.oscardm22.estuguia.presentation.features.auth.ui.activities.LoginActivity
 import com.oscardm22.estuguia.presentation.features.auth.ui.activities.RegisterActivity
+import com.oscardm22.estuguia.presentation.features.main.ui.activities.MainActivity
 
 /**
  * Maneja toda la navegación entre pantallas de autenticación
@@ -27,8 +28,7 @@ class AuthNavigation(private val context: Context) {
 
         context.startActivity(intent)
 
-        // Si clearTask es true, no llamamos finish() porque estamos empezando una nueva tarea
-        if (!clearTask && context is android.app.Activity) {
+        if (!clearTask && context is Activity) {
             context.finish()
         }
     }
@@ -38,11 +38,16 @@ class AuthNavigation(private val context: Context) {
      */
     fun navigateToRegister() {
         val intent = Intent(context, RegisterActivity::class.java)
-        context.startActivity(intent)
 
-        // Opcional: agregar animación de transición
-        if (context is android.app.Activity) {
-            // context.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        if (context is Activity) {
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                context,
+                android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right
+            ).toBundle()
+            context.startActivity(intent, options)
+        } else {
+            context.startActivity(intent)
         }
     }
 
@@ -50,16 +55,19 @@ class AuthNavigation(private val context: Context) {
      * Navega a la pantalla principal de la app (después del login exitoso)
      */
     fun navigateToMain() {
-        // Por ahora navega al Login como placeholder
-        navigateToLogin(clearTask = true)
+        val intent = Intent(context, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 
-        // Mostrar mensaje de éxito
-        Toast.makeText(context, R.string.login_success, Toast.LENGTH_SHORT).show()
-
-        // TODO: Implementar navegación real a MainActivity
-        // val intent = Intent(context, MainActivity::class.java)
-        // intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        // context.startActivity(intent)
+        if (context is Activity) {
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                context,
+                android.R.anim.fade_in,
+                android.R.anim.fade_out
+            ).toBundle()
+            context.startActivity(intent, options)
+        } else {
+            context.startActivity(intent)
+        }
     }
 
     /**
@@ -67,14 +75,24 @@ class AuthNavigation(private val context: Context) {
      */
     fun navigateToForgotPassword() {
         val intent = Intent(context, ForgotPasswordActivity::class.java)
-        context.startActivity(intent)
+
+        if (context is Activity) {
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                context,
+                android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right
+            ).toBundle()
+            context.startActivity(intent, options)
+        } else {
+            context.startActivity(intent)
+        }
     }
 
     /**
      * Cierra la actividad actual
      */
     fun finishCurrentActivity() {
-        if (context is android.app.Activity) {
+        if (context is Activity) {
             context.finish()
         }
     }
@@ -83,7 +101,7 @@ class AuthNavigation(private val context: Context) {
      * Navega hacia atrás
      */
     fun navigateBack() {
-        if (context is android.app.Activity) {
+        if (context is Activity) {
             context.finish()
         }
     }

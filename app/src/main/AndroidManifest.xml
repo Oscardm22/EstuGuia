@@ -17,6 +17,9 @@
         android:theme="@style/Theme.EstuGuia"
         tools:targetApi="31">
         <activity
+            android:name=".presentation.features.main.ui.activities.MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.features.auth.ui.activities.ForgotPasswordActivity"
             android:exported="false" />
         <activity

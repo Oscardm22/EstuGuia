@@ -30,6 +30,33 @@
     <string name="reset_link_sent">Enlace de recuperación enviado. Revisa tu email.</string>
     <string name="reset_link_error">Error al enviar el enlace. Intenta nuevamente.</string>
 
+    <!-- Menú -->
+    <string name="action_settings">Configuración</string>
+    <string name="action_logout">Cerrar Sesión</string>
+
+    <!-- Navegación inferior -->
+    <string name="title_dashboard">Inicio</string>
+    <string name="title_schedule">Horario</string>
+    <string name="title_tasks">Tareas</string>
+    <string name="title_profile">Perfil</string>
+
+    <!-- Dashboard Strings -->
+    <string name="greeting_morning">¡Buenos días!</string>
+    <string name="greeting_afternoon">¡Buenas tardes!</string>
+    <string name="greeting_evening">¡Buenas noches!</string>
+    <string name="default_student">Estudiante</string>
+    <string name="default_class_count">0</string>
+    <string name="default_task_count">0</string>
+    <string name="default_time">--:--</string>
+    <string name="classes_today">Clases hoy</string>
+    <string name="pending_tasks">Tareas pendientes</string>
+    <string name="next_class">Próxima clase</string>
+    <string name="upcoming_tasks">Próximas Tareas</string>
+    <string name="view_all">Ver todas</string>
+    <string name="quick_actions">Acciones Rápidas</string>
+    <string name="add_class">Agregar Clase</string>
+    <string name="add_task">Agregar Tarea</string>
+
     <!-- Validaciones -->
     <string name="error_name_required">Ingresa tu nombre completo</string>
     <string name="error_passwords_not_match">Las contraseñas no coinciden</string>
@@ -46,5 +73,7 @@
     <string name="navigate_forgot_password">Navegar a recuperación</string>
 
     <!-- Register Messages -->
-    <string name="register_success">✅ Registro exitoso!</string>
+    <string name="register_success">Registro exitoso!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
