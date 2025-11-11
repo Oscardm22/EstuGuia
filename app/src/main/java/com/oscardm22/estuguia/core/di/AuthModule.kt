@@ -3,7 +3,7 @@ package com.oscardm22.estuguia.core.di
 import com.oscardm22.estuguia.data.repositories.AuthRepositoryImpl
 import com.oscardm22.estuguia.data.datasources.remote.FirebaseAuthDataSource
 import com.oscardm22.estuguia.domain.repositories.AuthRepository
-import com.oscardm22.estuguia.domain.usecases.LoginUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.LoginUseCase
 import dagger.Module
 import dagger.Provides
 import com.google.firebase.auth.FirebaseAuth

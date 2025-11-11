@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import com.oscardm22.estuguia.R
+import com.oscardm22.estuguia.presentation.features.auth.ui.activities.ForgotPasswordActivity
 import com.oscardm22.estuguia.presentation.features.auth.ui.activities.LoginActivity
 import com.oscardm22.estuguia.presentation.features.auth.ui.activities.RegisterActivity
 
@@ -65,12 +66,8 @@ class AuthNavigation(private val context: Context) {
      * Navega a la pantalla de recuperación de contraseña
      */
     fun navigateToForgotPassword() {
-        // Placeholder por ahora
-        Toast.makeText(context, R.string.navigate_forgot_password, Toast.LENGTH_SHORT).show()
-
-        // TODO: Implementar navegación real
-        // val intent = Intent(context, ForgotPasswordActivity::class.java)
-        // context.startActivity(intent)
+        val intent = Intent(context, ForgotPasswordActivity::class.java)
+        context.startActivity(intent)
     }
 
     /**

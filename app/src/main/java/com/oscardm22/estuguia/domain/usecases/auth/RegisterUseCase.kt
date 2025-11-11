@@ -1,4 +1,4 @@
-package com.oscardm22.estuguia.domain.usecases
+package com.oscardm22.estuguia.domain.usecases.auth
 
 import com.oscardm22.estuguia.domain.models.User
 import com.oscardm22.estuguia.domain.repositories.AuthRepository

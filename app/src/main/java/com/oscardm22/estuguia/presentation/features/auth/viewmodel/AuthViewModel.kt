@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.oscardm22.estuguia.domain.usecases.LoginUseCase
-import com.oscardm22.estuguia.domain.usecases.RegisterUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.LoginUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.RegisterUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.SendPasswordResetUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val sendPasswordResetUseCase: SendPasswordResetUseCase
 ) : ViewModel() {
     // LiveData para estados de Login y Registro
     private val _loginState = MutableLiveData(LoginState())
@@ -81,6 +83,13 @@ class AuthViewModel @Inject constructor(
                     )
                 }
             )
+        }
+    }
+
+    fun sendPasswordResetEmail(email: String, callback: (Result<Boolean>) -> Unit) {
+        viewModelScope.launch {
+            val result = sendPasswordResetUseCase(email)
+            callback(result)
         }
     }
 

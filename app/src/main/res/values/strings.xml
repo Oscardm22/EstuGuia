@@ -22,6 +22,14 @@
     <string name="already_have_account">¿Ya tienes cuenta? Inicia sesión</string>
     <string name="select_grade">Selecciona tu grado</string>
 
+    <!-- Forgot Password -->
+    <string name="forgot_password_title">Recuperar Contraseña</string>
+    <string name="forgot_password_subtitle">Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña</string>
+    <string name="send_reset_link">Enviar Enlace</string>
+    <string name="back_to_login">Volver al Inicio de Sesión</string>
+    <string name="reset_link_sent">Enlace de recuperación enviado. Revisa tu email.</string>
+    <string name="reset_link_error">Error al enviar el enlace. Intenta nuevamente.</string>
+
     <!-- Validaciones -->
     <string name="error_name_required">Ingresa tu nombre completo</string>
     <string name="error_passwords_not_match">Las contraseñas no coinciden</string>
