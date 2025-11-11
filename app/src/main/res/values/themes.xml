@@ -16,5 +16,8 @@
         <item name="textInputStyle">@style/Widget.Material3.TextInputLayout.OutlinedBox</item>
 
         <item name="android:autofilledHighlight">@android:color/transparent</item>
+
+        <item name="colorControlNormal">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
     </style>
 </resources>

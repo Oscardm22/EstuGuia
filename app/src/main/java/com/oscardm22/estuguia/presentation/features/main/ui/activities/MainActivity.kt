@@ -29,11 +29,11 @@ class MainActivity : AppCompatActivity() {
 
         setupToolbar()
         setupNavigation()
-        setupMenuListeners()
     }
 
     private fun setupToolbar() {
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
     }
 
     private fun setupNavigation() {
@@ -54,19 +54,21 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setupWithNavController(navController)
     }
 
-    private fun setupMenuListeners() {
-        binding.toolbar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.action_logout -> {
-                    logout()
-                    true
-                }
-                R.id.action_settings -> {
-                    // TODO: Navegar a configuración
-                    true
-                }
-                else -> false
+    override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_logout -> {
+                logout()
+                true
             }
+            R.id.action_settings -> {
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
