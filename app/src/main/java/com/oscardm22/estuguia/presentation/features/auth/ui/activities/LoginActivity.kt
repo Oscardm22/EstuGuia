@@ -18,7 +18,11 @@ import com.oscardm22.estuguia.presentation.features.auth.ui.components.error.Aut
 import com.oscardm22.estuguia.presentation.features.auth.ui.components.input.InputFieldManager
 import com.oscardm22.estuguia.core.navigation.AuthNavigation
 import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.oscardm22.estuguia.presentation.features.main.ui.activities.MainActivity
+import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -28,6 +32,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var errorHandler: AuthErrorHandler
     private val inputManager = InputFieldManager()
     private lateinit var authNavigation: AuthNavigation
+
+    @Inject
+    lateinit var firebaseAuth: FirebaseAuth
 
     private lateinit var emailEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
@@ -40,6 +47,10 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // VERIFICAR SI YA HAY SESIÓN ACTIVA ANTES DE CARGAR LA VISTA
+        checkCurrentUser()
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
@@ -59,6 +70,18 @@ class LoginActivity : AppCompatActivity() {
 
         errorHandler = AuthErrorHandler(this)
         authNavigation = AuthNavigation(this)
+    }
+
+    private fun checkCurrentUser() {
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            // Usuario ya está logueado, redirigir directamente a MainActivity
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+        // Si no hay usuario, continuar con el login normal
     }
 
     private fun initializeViews() {
