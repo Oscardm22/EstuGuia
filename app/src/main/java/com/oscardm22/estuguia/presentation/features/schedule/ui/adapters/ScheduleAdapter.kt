@@ -39,8 +39,6 @@ class ScheduleAdapter(
         fun bind(schedule: Schedule) {
             with(binding) {
                 textCourseName.text = schedule.courseName
-                textCourseCode.text = schedule.courseCode
-
                 textScheduleTime.text = root.context.getString(
                     R.string.schedule_time_format,
                     schedule.startTime,

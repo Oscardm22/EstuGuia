@@ -94,7 +94,7 @@ class AddScheduleFragment : Fragment() {
     private fun populateForm(schedule: Schedule) {
         with(binding) {
             editTextCourseName.setText(schedule.courseName)
-            editTextCourseCode.setText(schedule.courseCode)
+            // ELIMINADO: editTextCourseCode.setText(schedule.courseCode)
             editTextClassroom.setText(schedule.classroom)
             editTextProfessor.setText(schedule.professor)
 
@@ -166,7 +166,7 @@ class AddScheduleFragment : Fragment() {
 
     private fun saveSchedule() {
         val courseName = binding.editTextCourseName.text.toString().trim()
-        val courseCode = binding.editTextCourseCode.text.toString().trim()
+        // ELIMINADO: val courseCode = binding.editTextCourseCode.text.toString().trim()
         val classroom = binding.editTextClassroom.text.toString().trim()
         val professor = binding.editTextProfessor.text.toString().trim()
 
@@ -195,7 +195,6 @@ class AddScheduleFragment : Fragment() {
         val newSchedule = Schedule(
             id = args.schedule?.id ?: "",
             courseName = courseName,
-            courseCode = courseCode,
             dayOfWeek = selectedDay,
             startTime = selectedStartTime,
             endTime = selectedEndTime,
