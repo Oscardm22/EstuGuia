@@ -13,9 +13,15 @@
 
     <fragment
         android:id="@+id/scheduleFragment"
-        android:name="com.oscardm22.estuguia.presentation.features.main.ui.fragments.ScheduleFragment"
+        android:name="com.oscardm22.estuguia.presentation.features.schedule.ui.fragments.ScheduleFragment"
         android:label="@string/title_schedule"
-        tools:layout="@layout/fragment_schedule" />
+        tools:layout="@layout/fragment_schedule">
+
+        <action
+            android:id="@+id/action_scheduleFragment_to_addScheduleFragment"
+            app:destination="@id/addScheduleFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/tasksFragment"
@@ -28,5 +34,34 @@
         android:name="com.oscardm22.estuguia.presentation.features.main.ui.fragments.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/addScheduleFragment"
+        android:name="com.oscardm22.estuguia.presentation.features.schedule.ui.fragments.AddScheduleFragment"
+        android:label="Agregar Horario"
+        tools:layout="@layout/fragment_add_schedule">
+
+        <argument
+            android:name="schedule"
+            app:argType="com.oscardm22.estuguia.domain.models.Schedule"
+            android:defaultValue="@null"
+            app:nullable="true" />
+
+        <argument
+            android:name="dayOfWeek"
+            android:defaultValue="1"
+            app:argType="integer" />
+
+        <argument
+            android:name="startTime"
+            android:defaultValue=""
+            app:argType="string" />
+
+        <argument
+            android:name="endTime"
+            android:defaultValue=""
+            app:argType="string" />
+
+    </fragment>
 
 </navigation>

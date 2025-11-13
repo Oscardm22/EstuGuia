@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    android:layout_marginBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Indicador de color -->
+            <View
+                android:id="@+id/viewColorIndicator"
+                android:layout_width="4dp"
+                android:layout_height="40dp"
+                android:background="@color/purple_500"
+                android:layout_marginEnd="12dp" />
+
+            <!-- Información principal -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textCourseName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Matemáticas Avanzadas"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/textCourseCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="MAT-101"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600" />
+
+                <TextView
+                    android:id="@+id/textScheduleTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="08:00 - 10:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/purple_500"
+                    android:textStyle="bold"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+            <!-- Información día y turno -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="end">
+
+                <TextView
+                    android:id="@+id/textDay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Lunes"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600"
+                    android:background="@drawable/rounded_chip"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp" />
+
+                <TextView
+                    android:id="@+id/textTurn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Mañana"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_600"
+                    android:background="@drawable/rounded_chip"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:layout_marginTop="4dp" />
+
+            </LinearLayout>
+
+            <!-- Ícono expandir -->
+            <ImageView
+                android:id="@+id/imageExpand"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/ic_expand_more"
+                android:src="@drawable/ic_expand_more"
+                android:layout_marginStart="8dp"
+                app:tint="@color/gray_500" />
+
+        </LinearLayout>
+
+        <!-- Detalles (inicialmente ocultos) -->
+        <LinearLayout
+            android:id="@+id/linearLayoutDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:paddingTop="16dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_200"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Información del aula -->
+            <TextView
+                android:id="@+id/textClassroom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableStartCompat="@drawable/ic_classroom"
+                app:drawableTint="@color/gray_500"
+                tools:text="Aula 304"
+                android:textSize="14sp"
+                android:textColor="@color/gray_700"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Información del profesor -->
+            <TextView
+                android:id="@+id/textProfessor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:drawableStartCompat="@drawable/ic_professor"
+                app:drawableTint="@color/gray_500"
+                tools:text="Dr. Juan Pérez"
+                android:textSize="14sp"
+                android:textColor="@color/gray_700"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Botones de acción -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonEdit"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/edit"
+                    android:layout_marginEnd="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonDelete"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/delete"
+                    android:textColor="@color/red_500" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
