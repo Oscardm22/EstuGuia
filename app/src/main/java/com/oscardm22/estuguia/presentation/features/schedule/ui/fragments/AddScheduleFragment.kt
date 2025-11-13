@@ -71,6 +71,8 @@ class AddScheduleFragment : Fragment() {
         // Inicializar como vacío hasta que se seleccionen
         selectedStartTime = ""
         selectedEndTime = ""
+
+        binding.textTurnDisplay.visibility = View.GONE
     }
 
     private fun setupClickListeners() {
@@ -94,7 +96,6 @@ class AddScheduleFragment : Fragment() {
     private fun populateForm(schedule: Schedule) {
         with(binding) {
             editTextCourseName.setText(schedule.courseName)
-            // ELIMINADO: editTextCourseCode.setText(schedule.courseCode)
             editTextClassroom.setText(schedule.classroom)
             editTextProfessor.setText(schedule.professor)
 
@@ -142,6 +143,12 @@ class AddScheduleFragment : Fragment() {
     }
 
     private fun updateTurnDisplay() {
+        // Validar que selectedStartTime no esté vacío antes de determinar el turno
+        if (selectedStartTime.isEmpty()) {
+            binding.textTurnDisplay.visibility = View.GONE
+            return
+        }
+
         val turn = determineTurnFromTime(selectedStartTime)
         val turnName = getTurnDisplayName(turn)
         binding.textTurnDisplay.text = getString(R.string.turn_display, turnName)
@@ -149,6 +156,10 @@ class AddScheduleFragment : Fragment() {
     }
 
     private fun determineTurnFromTime(startTime: String): Turn {
+        if (startTime.isEmpty()) {
+            return Turn.MORNING // valor por defecto
+        }
+
         val (hour, _) = startTime.split(":").map { it.toInt() }
 
         return when (hour) {
