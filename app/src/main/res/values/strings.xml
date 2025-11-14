@@ -83,7 +83,6 @@
     <string name="select_day">Seleccionar día</string>
     <string name="select_turn">Seleccionar turno</string>
     <string name="save">Guardar</string>
-    <string name="cancel">Cancelar</string>
     <string name="edit">Editar</string>
     <string name="delete">Eliminar</string>
     <string name="default_start_time">08:00</string>
@@ -109,6 +108,36 @@
     <string name="morning">Mañana</string>
     <string name="afternoon">Tarde</string>
 
+    <!-- Tareas -->
+    <string name="tasks">Tareas</string>
+    <string name="task_title">Título de la tarea</string>
+    <string name="task_description">Descripción</string>
+    <string name="select_schedule">Seleccionar materia</string>
+    <string name="due_date">Fecha de vencimiento</string>
+    <string name="select_date">Seleccionar fecha</string>
+    <string name="priority">Prioridad</string>
+    <string name="reminder">Recordatorio</string>
+    <string name="set_reminder">Establecer recordatorio</string>
+    <string name="save_task">Guardar tarea</string>
+    <string name="cancel">Cancelar</string>
+
+    <!-- Filtros -->
+    <string name="filter_by_status">Filtrar por estado</string>
+    <string name="all">Todos</string>
+    <string name="pending">Pendientes</string>
+    <string name="in_progress" tools:ignore="PrivateResource">En progreso</string>
+    <string name="completed">Completadas</string>
+
+    <!-- Prioridades -->
+    <string name="low">Baja</string>
+    <string name="medium">Media</string>
+    <string name="high">Alta</string>
+
+    <!-- Estados vacíos -->
+    <string name="no_tasks_found">No se encontraron tareas</string>
+    <string name="create_your_first_task">Crea tu primera tarea</string>
+    <string name="empty_tasks">Estado vacío de tareas</string>
+
     <!-- Validaciones -->
     <string name="error_name_required">Ingresa tu nombre completo</string>
     <string name="error_passwords_not_match">Las contraseñas no coinciden</string>
@@ -129,6 +158,7 @@
 
     <!-- Descripciones -->
     <string name="ic_expand_more">Icono de expandir</string>
+    <string name="ic_add_task">Icono de agregar</string>
 
     <!-- Formatos -->
     <string name="schedule_time_format">%1$s - %2$s</string>

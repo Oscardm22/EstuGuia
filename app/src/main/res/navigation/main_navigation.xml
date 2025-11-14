@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/tasksFragment"
-        android:name="com.oscardm22.estuguia.presentation.features.main.ui.fragments.TasksFragment"
+        android:name="com.oscardm22.estuguia.presentation.features.tasks.ui.fragments.TasksFragment"
         android:label="@string/title_tasks"
         tools:layout="@layout/fragment_tasks" />
 

@@ -26,4 +26,20 @@
     <color name="blue_500">#FF2196F3</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
+
+    <!-- Prioridades -->
+    <color name="priority_low">#4CAF50</color>
+    <color name="priority_medium">#FF9800</color>
+    <color name="priority_high">#F44336</color>
+
+    <color name="priority_low_text">#1B5E20</color>
+    <color name="priority_medium_text">#E65100</color>
+    <color name="priority_high_text">#B71C1C</color>
+
+    <!-- Selectores para chips -->
+    <color name="chip_background_selector">#FFFFFF</color>
+
+    <color name="priority_low_selector">#E8F5E8</color>
+    <color name="priority_medium_selector">#FFF3E0</color>
+    <color name="priority_high_selector">#FFEBEE</color>
 </resources>
