@@ -122,6 +122,72 @@ class FirebaseAuthDataSource @Inject constructor(
         }
     }
 
+    suspend fun getCurrentUserProfile(): UserDto {
+        val currentUser = firebaseAuth.currentUser
+            ?: throw Exception("No hay usuario autenticado")
+
+        return getUserFromFirestore(currentUser.uid)
+    }
+
+    suspend fun updateProfile(userDto: UserDto): Boolean {
+        return try {
+            // 1. Actualizar en Firestore
+            firestore.collection("users")
+                .document(userDto.id)
+                .set(userDto)
+                .await()
+
+            // 2. Actualizar en Firebase Auth (solo nombre)
+            val currentUser = firebaseAuth.currentUser
+            if (currentUser != null) {
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(userDto.name)
+                    .build()
+                currentUser.updateProfile(profileUpdates).await()
+            }
+
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun updatePassword(currentPassword: String, newPassword: String): Boolean {
+        return try {
+            val user = firebaseAuth.currentUser
+                ?: throw Exception("No hay usuario autenticado")
+
+            // Reautenticar antes de cambiar contraseña
+            val credential = com.google.firebase.auth.EmailAuthProvider
+                .getCredential(user.email ?: "", currentPassword)
+
+            user.reauthenticate(credential).await()
+            user.updatePassword(newPassword).await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun deleteAccount(): Boolean {
+        return try {
+            val user = firebaseAuth.currentUser
+                ?: throw Exception("No hay usuario autenticado")
+
+            // 1. Eliminar de Firestore
+            firestore.collection("users")
+                .document(user.uid)
+                .delete()
+                .await()
+
+            // 2. Eliminar de Firebase Auth
+            user.delete().await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     private suspend fun getUserFromFirestore(userId: String): UserDto {
         val document = firestore.collection("users").document(userId).get().await()
         return document.toObject(UserDto::class.java) ?: throw Exception("Usuario no encontrado en Firestore")

@@ -75,11 +75,74 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun getCurrentUserId(): String? {
         return firebaseAuthDataSource.getCurrentUserSync()?.id
     }
+
+    override suspend fun getCurrentUserProfile(): Result<User> {
+        return try {
+            val userDto = firebaseAuthDataSource.getCurrentUserProfile()
+            Result.success(userDto.toDomain())
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updateProfile(user: User): Result<Boolean> {
+        return try {
+            val userDto = user.toDto()
+            val success = firebaseAuthDataSource.updateProfile(userDto)
+            if (success) {
+                Result.success(true)
+            } else {
+                Result.failure(Exception("Error al actualizar el perfil"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun updatePassword(currentPassword: String, newPassword: String): Result<Boolean> {
+        return try {
+            val success = firebaseAuthDataSource.updatePassword(currentPassword, newPassword)
+            if (success) {
+                Result.success(true)
+            } else {
+                Result.failure(Exception("Error al actualizar la contraseña"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun deleteAccount(): Result<Boolean> {
+        return try {
+            val success = firebaseAuthDataSource.deleteAccount()
+            if (success) {
+                Result.success(true)
+            } else {
+                Result.failure(Exception("Error al eliminar la cuenta"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 
-// Extensión para convertir DTO a Domain
 private fun UserDto.toDomain(): User {
     return User(
+        id = this.id,
+        email = this.email,
+        name = this.name,
+        grade = this.grade,
+        section = this.section,
+        school = this.school,
+        profileImage = this.profileImage,
+        createdAt = this.createdAt,
+        isEmailVerified = this.isEmailVerified
+    )
+}
+
+// Extensión para convertir Domain a DTO
+private fun User.toDto(): UserDto {
+    return UserDto(
         id = this.id,
         email = this.email,
         name = this.name,

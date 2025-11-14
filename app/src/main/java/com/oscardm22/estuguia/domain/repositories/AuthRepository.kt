@@ -42,7 +42,7 @@ interface AuthRepository {
     suspend fun sendPasswordResetEmail(email: String): Result<Boolean>
 
 
-    // 👥 Estado del Usuario
+    // Estado del Usuario
 
     /**
      * Flujo que emite el usuario actualmente autenticado
@@ -59,4 +59,24 @@ interface AuthRepository {
      * Obtener el ID del usuario actual
      */
     suspend fun getCurrentUserId(): String?
+
+    /**
+     * Obtener el perfil completo del usuario actual desde Firestore
+     */
+    suspend fun getCurrentUserProfile(): Result<User>
+
+    /**
+     * Actualizar el perfil del usuario
+     */
+    suspend fun updateProfile(user: User): Result<Boolean>
+
+    /**
+     * Actualizar la contraseña del usuario
+     */
+    suspend fun updatePassword(currentPassword: String, newPassword: String): Result<Boolean>
+
+    /**
+     * Eliminar la cuenta del usuario
+     */
+    suspend fun deleteAccount(): Result<Boolean>
 }

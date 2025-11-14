@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.oscardm22.estuguia.presentation.features.main.ui.fragments.ProfileFragment"
+        android:name="com.oscardm22.estuguia.presentation.features.profile.ui.fragments.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 

@@ -8,6 +8,11 @@ import dagger.Module
 import dagger.Provides
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.oscardm22.estuguia.domain.usecases.auth.DeleteAccountUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.GetCurrentUserProfileUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.LogoutUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.UpdatePasswordUseCase
+import com.oscardm22.estuguia.domain.usecases.auth.UpdateProfileUseCase
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
@@ -42,5 +47,45 @@ object AuthModule {
         authRepository: AuthRepository
     ): LoginUseCase {
         return LoginUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetCurrentUserProfileUseCase(
+        authRepository: AuthRepository
+    ): GetCurrentUserProfileUseCase {
+        return GetCurrentUserProfileUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdateProfileUseCase(
+        authRepository: AuthRepository
+    ): UpdateProfileUseCase {
+        return UpdateProfileUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUpdatePasswordUseCase(
+        authRepository: AuthRepository
+    ): UpdatePasswordUseCase {
+        return UpdatePasswordUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeleteAccountUseCase(
+        authRepository: AuthRepository
+    ): DeleteAccountUseCase {
+        return DeleteAccountUseCase(authRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogoutUseCase(
+        authRepository: AuthRepository
+    ): LogoutUseCase {
+        return LogoutUseCase(authRepository)
     }
 }

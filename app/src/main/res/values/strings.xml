@@ -138,6 +138,40 @@
     <string name="create_your_first_task">Crea tu primera tarea</string>
     <string name="empty_tasks">Estado vacío de tareas</string>
 
+    <!-- Profile -->
+    <string name="profile_picture">Foto de perfil</string>
+    <string name="user_name_placeholder">Nombre del Usuario</string>
+    <string name="user_email_placeholder">usuario@email.com</string>
+    <string name="user_grade_placeholder">5° de secundaria - Sección A</string>
+    <string name="academic_information">Información Académica</string>
+    <string name="grade">Grado</string>
+    <string name="section">Sección</string>
+    <string name="school">Colegio</string>
+    <string name="edit_profile">Editar Perfil</string>
+    <string name="change_password">Cambiar Contraseña</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="delete_account">Eliminar Cuenta</string>
+    <string name="full_name_hint">Nombre completo</string>
+    <string name="grade_hint">Grado (ej: 5to)</string>
+    <string name="section_hint">Sección (opcional)</string>
+    <string name="school_hint">Colegio (opcional)</string>
+    <string name="section_placeholder">A</string>
+
+    <!-- Password Change Dialog -->
+    <string name="current_password">Contraseña actual</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="confirm_new_password">Confirmar nueva contraseña</string>
+    <string name="change_password_dialog_title">Cambiar Contraseña</string>
+    <string name="change_password_button">Cambiar</string>
+    <string name="passwords_do_not_match">Las contraseñas no coinciden</string>
+
+    <!-- Dialog Confirmation Messages -->
+    <string name="logout_confirmation_message">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="delete_account_confirmation_message">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.</string>
+    <string name="yes">Sí</string>
+
+    <!-- Validation Messages -->
+    <string name="name_and_grade_required">Nombre y grado son obligatorios</string>
     <!-- Validaciones -->
     <string name="error_name_required">Ingresa tu nombre completo</string>
     <string name="error_passwords_not_match">Las contraseñas no coinciden</string>
