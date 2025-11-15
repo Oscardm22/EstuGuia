@@ -72,7 +72,7 @@ class DashboardFragment : Fragment() {
     private fun updateGreeting() {
         val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
         val greeting = when (hour) {
-            in 5..11 -> "¡Buenos días!"
+            in 0..11 -> "¡Buenos días!"
             in 12..18 -> "¡Buenas tardes!"
             else -> "¡Buenas noches!"
         }

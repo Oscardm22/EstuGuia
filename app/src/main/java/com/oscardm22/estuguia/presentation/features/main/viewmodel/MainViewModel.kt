@@ -2,15 +2,19 @@ package com.oscardm22.estuguia.presentation.features.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.oscardm22.estuguia.domain.models.Schedule
+import com.oscardm22.estuguia.domain.usecases.auth.GetCurrentUserProfileUseCase
+import com.oscardm22.estuguia.domain.usecases.dashboard.GetTodaySchedulesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
-// Modelos temporales
-data class User(
+data class DashboardUser(
     val name: String = "Estudiante",
     val email: String = "",
     val grade: String = "",
@@ -24,10 +28,13 @@ data class DashboardStats(
 )
 
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val getCurrentUserProfileUseCase: GetCurrentUserProfileUseCase,
+    private val getTodaySchedulesUseCase: GetTodaySchedulesUseCase
+) : ViewModel() {
 
-    private val _userData = MutableStateFlow(User())
-    val userData: StateFlow<User> = _userData.asStateFlow()
+    private val _userData = MutableStateFlow(DashboardUser())
+    val userData: StateFlow<DashboardUser> = _userData.asStateFlow()
 
     private val _dashboardStats = MutableStateFlow(DashboardStats())
     val dashboardStats: StateFlow<DashboardStats> = _dashboardStats.asStateFlow()
@@ -39,17 +46,58 @@ class MainViewModel @Inject constructor() : ViewModel() {
 
     private fun loadUserData() {
         viewModelScope.launch {
-            _userData.value = User(name = "Juan Pérez")
+            try {
+                val result = getCurrentUserProfileUseCase()
+                if (result.isSuccess) {
+                    val user = result.getOrThrow()
+                    _userData.value = DashboardUser(
+                        name = user.getDisplayName(),
+                        email = user.email,
+                        grade = user.grade,
+                        section = user.section ?: ""
+                    )
+                }
+            } catch (e: Exception) {
+                // Fallback a datos básicos si hay error
+                _userData.value = DashboardUser(name = "Estudiante")
+            }
         }
     }
 
     private fun loadDashboardStats() {
         viewModelScope.launch {
-            _dashboardStats.value = DashboardStats(
-                todayClasses = 3,
-                pendingTasks = 5,
-                nextClassTime = "10:30"
-            )
+            try {
+                val todaySchedules = getTodaySchedulesUseCase()
+                val nextClass = calculateNextClass(todaySchedules)
+
+                _dashboardStats.value = DashboardStats(
+                    todayClasses = todaySchedules.size,
+                    pendingTasks = 0,
+                    nextClassTime = nextClass
+                )
+            } catch (e: Exception) {
+                _dashboardStats.value = DashboardStats(
+                    todayClasses = 0,
+                    pendingTasks = 0,
+                    nextClassTime = null
+                )
+            }
         }
+    }
+
+    private fun calculateNextClass(schedules: List<Schedule>): String? {
+        if (schedules.isEmpty()) return null
+
+        val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+        return schedules
+            .filter { it.startTime > currentTime }
+            .minByOrNull { it.startTime }
+            ?.startTime
+    }
+
+    // Función para refrescar datos
+    fun refreshData() {
+        loadUserData()
+        loadDashboardStats()
     }
 }
