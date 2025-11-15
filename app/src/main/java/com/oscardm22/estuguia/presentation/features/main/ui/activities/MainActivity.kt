@@ -7,7 +7,6 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.databinding.ActivityMainBinding
@@ -56,7 +55,47 @@ class MainActivity : AppCompatActivity() {
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
-        binding.bottomNavigation.setupWithNavController(navController)
+
+        // Configuración manual del bottom navigation
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.dashboardFragment -> {
+                    // Limpiar el back stack y navegar al dashboard
+                    if (navController.currentDestination?.id != R.id.dashboardFragment) {
+                        navController.popBackStack(R.id.dashboardFragment, false)
+                    }
+                    true
+                }
+                R.id.scheduleFragment -> {
+                    if (navController.currentDestination?.id != R.id.scheduleFragment) {
+                        navController.navigate(R.id.scheduleFragment)
+                    }
+                    true
+                }
+                R.id.tasksFragment -> {
+                    if (navController.currentDestination?.id != R.id.tasksFragment) {
+                        navController.navigate(R.id.tasksFragment)
+                    }
+                    true
+                }
+                R.id.profileFragment -> {
+                    if (navController.currentDestination?.id != R.id.profileFragment) {
+                        navController.navigate(R.id.profileFragment)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.dashboardFragment -> binding.bottomNavigation.selectedItemId = R.id.dashboardFragment
+                R.id.scheduleFragment -> binding.bottomNavigation.selectedItemId = R.id.scheduleFragment
+                R.id.tasksFragment -> binding.bottomNavigation.selectedItemId = R.id.tasksFragment
+                R.id.profileFragment -> binding.bottomNavigation.selectedItemId = R.id.profileFragment
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {

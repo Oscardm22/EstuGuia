@@ -9,7 +9,20 @@
         android:id="@+id/dashboardFragment"
         android:name="com.oscardm22.estuguia.presentation.features.main.ui.fragments.DashboardFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard">
+
+        <!-- Acciones desde el Dashboard -->
+        <action
+            android:id="@+id/action_dashboard_to_schedule"
+            app:destination="@id/scheduleFragment"
+            app:popUpTo="@id/dashboardFragment" />
+
+        <action
+            android:id="@+id/action_dashboard_to_tasks"
+            app:destination="@id/tasksFragment"
+            app:popUpTo="@id/dashboardFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/scheduleFragment"

@@ -39,15 +39,15 @@ class DashboardFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.buttonViewAllTasks.setOnClickListener {
-            findNavController().navigate(R.id.tasksFragment)
+            findNavController().navigate(R.id.action_dashboard_to_tasks)
         }
 
         binding.buttonAddClass.setOnClickListener {
-            findNavController().navigate(R.id.scheduleFragment)
+            findNavController().navigate(R.id.action_dashboard_to_schedule)
         }
 
         binding.buttonAddTask.setOnClickListener {
-            findNavController().navigate(R.id.tasksFragment)
+            findNavController().navigate(R.id.action_dashboard_to_tasks)
         }
     }
 
