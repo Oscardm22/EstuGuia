@@ -120,6 +120,25 @@
     <string name="set_reminder">Establecer recordatorio</string>
     <string name="save_task">Guardar tarea</string>
     <string name="cancel">Cancelar</string>
+    <string name="tasks_title">Tus Tareas</string>
+    <string name="initial_tasks_summary">0 pendientes • 0 completadas</string>
+    <string name="initial_tasks_count">0 tareas</string>
+    <string name="new_task">Nueva Tarea</string>
+
+    <!-- Filters -->
+    <string name="filter_by">Filtrar por:</string>
+    <string name="filter_all">Todas</string>
+    <string name="filter_pending">Pendientes</string>
+    <string name="filter_completed">Completadas</string>
+    <string name="filter_high_priority">Alta Prioridad</string>
+
+    <!-- Sort -->
+    <string name="sort_by_date">Ordenar por: Fecha</string>
+
+    <!-- Empty State -->
+    <string name="no_tasks_title">No hay tareas</string>
+    <string name="no_tasks_description">Cuando crees tareas, aparecerán aquí organizadas por prioridad y fecha</string>
+    <string name="create_first_task">Crear primera tarea</string>
 
     <!-- Filtros -->
     <string name="filter_by_status">Filtrar por estado</string>
