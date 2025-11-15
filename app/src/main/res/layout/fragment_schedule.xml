@@ -54,9 +54,10 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/textClassesCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/classes_count"
+                            android:text="@string/zero"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             android:textColor="@color/purple_500" />
@@ -83,9 +84,10 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/textDaysCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/days_count"
+                            android:text="@string/zero"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             android:textColor="@color/teal_500" />
@@ -112,9 +114,10 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/textTurnsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/turns_count"
+                            android:text="@string/zero"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             android:textColor="@color/orange_500" />

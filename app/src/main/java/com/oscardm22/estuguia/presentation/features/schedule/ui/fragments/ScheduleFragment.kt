@@ -16,6 +16,7 @@ import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.databinding.FragmentScheduleBinding
 import com.oscardm22.estuguia.domain.models.Schedule
 import com.oscardm22.estuguia.presentation.features.schedule.ui.adapters.ScheduleAdapter
+import com.oscardm22.estuguia.presentation.features.schedule.viewmodel.ScheduleStats
 import com.oscardm22.estuguia.presentation.features.schedule.viewmodel.ScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -71,10 +72,19 @@ class ScheduleFragment : Fragment() {
                 when {
                     state.isLoading -> showLoading()
                     state.error != null -> showError(state.error)
-                    else -> showSchedules(state.schedules)
+                    else -> {
+                        showSchedules(state.schedules)
+                        updateStats(state.stats)
+                    }
                 }
             }
         }
+    }
+
+    private fun updateStats(stats: ScheduleStats) {
+        binding.textClassesCount.text = stats.totalClasses.toString()
+        binding.textDaysCount.text = stats.uniqueDays.toString()
+        binding.textTurnsCount.text = stats.uniqueTurns.toString()
     }
 
     private fun showLoading() {

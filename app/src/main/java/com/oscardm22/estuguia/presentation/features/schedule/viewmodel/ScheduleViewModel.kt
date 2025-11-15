@@ -44,10 +44,12 @@ class ScheduleViewModel @Inject constructor(
             if (result.isSuccess) {
                 val schedules = result.getOrDefault(emptyList())
                 val sortedSchedules = sortSchedules(schedules)
+                val stats = calculateStats(schedules) // Calcular estadísticas
 
                 _scheduleState.value = _scheduleState.value.copy(
                     isLoading = false,
                     schedules = sortedSchedules,
+                    stats = stats, // Actualizar estadísticas
                     error = null
                 )
             } else {
@@ -57,6 +59,18 @@ class ScheduleViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun calculateStats(schedules: List<Schedule>): ScheduleStats {
+        val totalClasses = schedules.size
+        val uniqueDays = schedules.map { it.dayOfWeek }.distinct().size
+        val uniqueTurns = schedules.map { it.turn }.distinct().size
+
+        return ScheduleStats(
+            totalClasses = totalClasses,
+            uniqueDays = uniqueDays,
+            uniqueTurns = uniqueTurns
+        )
     }
 
     private fun sortSchedules(schedules: List<Schedule>): List<Schedule> {
