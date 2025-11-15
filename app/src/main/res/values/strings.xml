@@ -120,6 +120,12 @@
     <string name="set_reminder">Establecer recordatorio</string>
     <string name="save_task">Guardar tarea</string>
     <string name="cancel">Cancelar</string>
+    <string name="select_due_date">Seleccionar fecha</string>
+    <string name="priority_low">Baja</string>
+    <string name="priority_medium">Media</string>
+    <string name="priority_high">Alta</string>
+    <string name="select_schedule_prompt">Selecciona una materia</string>
+    <string name="select_subject">Seleccionar materia</string>
 
     <!-- Filtros -->
     <string name="filter_by_status">Filtrar por estado</string>
@@ -132,6 +138,12 @@
     <string name="low">Baja</string>
     <string name="medium">Media</string>
     <string name="high">Alta</string>
+
+    <string name="no_reminder">Sin recordatorio</string>
+    <string name="one_day_before">1 día antes</string>
+    <string name="two_days_before">2 días antes</string>
+    <string name="three_days_before">3 días antes</string>
+    <string name="custom_reminder">Personalizado</string>
 
     <!-- Estados vacíos -->
     <string name="no_tasks_found">No se encontraron tareas</string>

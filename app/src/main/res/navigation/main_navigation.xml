@@ -40,7 +40,13 @@
         android:id="@+id/tasksFragment"
         android:name="com.oscardm22.estuguia.presentation.features.tasks.ui.fragments.TasksFragment"
         android:label="@string/title_tasks"
-        tools:layout="@layout/fragment_tasks" />
+        tools:layout="@layout/fragment_tasks">
+
+        <action
+            android:id="@+id/action_tasksFragment_to_addTaskFragment"
+            app:destination="@id/addTaskFragment" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
@@ -76,5 +82,11 @@
             app:argType="string" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/addTaskFragment"
+        android:name="com.oscardm22.estuguia.presentation.features.tasks.ui.fragments.AddTaskFragment"
+        android:label="Agregar Tarea"
+        tools:layout="@layout/fragment_add_task" />
 
 </navigation>
