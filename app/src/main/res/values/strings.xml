@@ -215,6 +215,7 @@
     <string name="classroom_with_professor">%1$s • %2$s</string>
     <string name="time_range">%1$s-%2$s</string>
     <string name="turn_display">Turno: %s</string>
+    <string name="due_date_format">Vence: %s</string>
 
     <string name="zero">0</string>
 </resources>

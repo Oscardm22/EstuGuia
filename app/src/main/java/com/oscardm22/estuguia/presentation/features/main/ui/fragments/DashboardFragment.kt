@@ -8,8 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.databinding.FragmentDashboardBinding
+import com.oscardm22.estuguia.presentation.features.main.ui.adapters.UpcomingTasksAdapter
 import com.oscardm22.estuguia.presentation.features.main.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -19,6 +21,7 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by viewModels()
+    private lateinit var upcomingTasksAdapter: UpcomingTasksAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,14 +35,28 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupUpcomingTasksRecyclerView()
         setupClickListeners()
         setupObservers()
         updateGreeting()
     }
 
+    private fun setupUpcomingTasksRecyclerView() {
+        upcomingTasksAdapter = UpcomingTasksAdapter { task ->
+            // Navegar a los detalles de la tarea o a la lista de tareas
+            navigateToTasks()
+        }
+
+        binding.recyclerUpcomingTasks.apply {
+            adapter = upcomingTasksAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            setHasFixedSize(true)
+        }
+    }
+
     private fun setupClickListeners() {
         binding.buttonViewAllTasks.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboard_to_tasks)
+            navigateToTasks()
         }
 
         binding.buttonAddClass.setOnClickListener {
@@ -47,7 +64,7 @@ class DashboardFragment : Fragment() {
         }
 
         binding.buttonAddTask.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboard_to_tasks)
+            navigateToTasks()
         }
     }
 
@@ -62,10 +79,28 @@ class DashboardFragment : Fragment() {
         // Observar estadísticas con StateFlow
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.dashboardStats.collect { stats ->
+                // Actualizar contadores básicos
                 binding.textClassesToday.text = stats.todayClasses.toString()
                 binding.textPendingTasks.text = stats.pendingTasks.toString()
                 binding.textNextClass.text = stats.nextClassTime ?: getString(R.string.default_time)
+
+                // Actualizar próximas tareas
+                updateUpcomingTasksSection(stats.upcomingTasks)
             }
+        }
+    }
+
+    private fun updateUpcomingTasksSection(upcomingTasks: List<com.oscardm22.estuguia.domain.models.Task>) {
+        if (upcomingTasks.isEmpty()) {
+            // Ocultar el RecyclerView cuando no hay tareas
+            binding.recyclerUpcomingTasks.visibility = View.GONE
+        } else {
+            // Mostrar el RecyclerView cuando hay tareas
+            binding.recyclerUpcomingTasks.visibility = View.VISIBLE
+
+            // Mostrar máximo 5 tareas en el dashboard
+            val tasksToShow = upcomingTasks.take(5)
+            upcomingTasksAdapter.submitList(tasksToShow)
         }
     }
 
@@ -77,6 +112,10 @@ class DashboardFragment : Fragment() {
             else -> "¡Buenas noches!"
         }
         binding.textGreeting.text = greeting
+    }
+
+    private fun navigateToTasks() {
+        findNavController().navigate(R.id.action_dashboard_to_tasks)
     }
 
     override fun onDestroyView() {

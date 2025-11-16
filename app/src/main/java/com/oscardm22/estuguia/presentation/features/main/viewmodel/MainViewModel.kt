@@ -3,9 +3,11 @@ package com.oscardm22.estuguia.presentation.features.main.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oscardm22.estuguia.domain.models.Schedule
+import com.oscardm22.estuguia.domain.models.Task
 import com.oscardm22.estuguia.domain.usecases.auth.GetCurrentUserProfileUseCase
 import com.oscardm22.estuguia.domain.usecases.dashboard.GetTodaySchedulesUseCase
 import com.oscardm22.estuguia.domain.usecases.tasks.GetPendingTasksCountUseCase
+import com.oscardm22.estuguia.domain.usecases.tasks.GetUpcomingTasksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,14 +27,16 @@ data class DashboardUser(
 data class DashboardStats(
     val todayClasses: Int = 0,
     val pendingTasks: Int = 0,
-    val nextClassTime: String? = null
+    val nextClassTime: String? = null,
+    val upcomingTasks: List<Task> = emptyList()
 )
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getCurrentUserProfileUseCase: GetCurrentUserProfileUseCase,
     private val getTodaySchedulesUseCase: GetTodaySchedulesUseCase,
-    private val getPendingTasksCountUseCase: GetPendingTasksCountUseCase // Nuevo UseCase
+    private val getPendingTasksCountUseCase: GetPendingTasksCountUseCase,
+    private val getUpcomingTasksUseCase: GetUpcomingTasksUseCase
 ) : ViewModel() {
 
     private val _userData = MutableStateFlow(DashboardUser())
@@ -53,7 +57,7 @@ class MainViewModel @Inject constructor(
                 val result = getCurrentUserProfileUseCase()
                 if (result.isSuccess) {
                     val user = result.getOrThrow()
-                    currentUserId = user.id // Guardar el userId
+                    currentUserId = user.id
 
                     _userData.value = DashboardUser(
                         name = user.getDisplayName(),
@@ -65,7 +69,6 @@ class MainViewModel @Inject constructor(
                     loadDashboardStats()
                 }
             } catch (e: Exception) {
-                // Fallback a datos básicos si hay error
                 _userData.value = DashboardUser(name = "Estudiante")
             }
         }
@@ -78,6 +81,7 @@ class MainViewModel @Inject constructor(
                 val todaySchedules = getTodaySchedulesUseCase()
                 val nextClass = calculateNextClass(todaySchedules)
 
+                // Cargar tareas pendientes
                 val pendingTasksCount = if (currentUserId != null) {
                     val result = getPendingTasksCountUseCase(currentUserId!!)
                     if (result.isSuccess) result.getOrThrow() else 0
@@ -85,16 +89,25 @@ class MainViewModel @Inject constructor(
                     0
                 }
 
+                val upcomingTasks = if (currentUserId != null) {
+                    val result = getUpcomingTasksUseCase(currentUserId!!, 7)
+                    if (result.isSuccess) result.getOrThrow() else emptyList()
+                } else {
+                    emptyList()
+                }
+
                 _dashboardStats.value = DashboardStats(
                     todayClasses = todaySchedules.size,
                     pendingTasks = pendingTasksCount,
-                    nextClassTime = nextClass
+                    nextClassTime = nextClass,
+                    upcomingTasks = upcomingTasks
                 )
             } catch (e: Exception) {
                 _dashboardStats.value = DashboardStats(
                     todayClasses = 0,
                     pendingTasks = 0,
-                    nextClassTime = null
+                    nextClassTime = null,
+                    upcomingTasks = emptyList()
                 )
             }
         }
