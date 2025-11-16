@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.oscardm22.estuguia.domain.models.Schedule
 import com.oscardm22.estuguia.domain.usecases.auth.GetCurrentUserProfileUseCase
 import com.oscardm22.estuguia.domain.usecases.dashboard.GetTodaySchedulesUseCase
+import com.oscardm22.estuguia.domain.usecases.tasks.GetPendingTasksCountUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +31,8 @@ data class DashboardStats(
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getCurrentUserProfileUseCase: GetCurrentUserProfileUseCase,
-    private val getTodaySchedulesUseCase: GetTodaySchedulesUseCase
+    private val getTodaySchedulesUseCase: GetTodaySchedulesUseCase,
+    private val getPendingTasksCountUseCase: GetPendingTasksCountUseCase // Nuevo UseCase
 ) : ViewModel() {
 
     private val _userData = MutableStateFlow(DashboardUser())
@@ -39,9 +41,10 @@ class MainViewModel @Inject constructor(
     private val _dashboardStats = MutableStateFlow(DashboardStats())
     val dashboardStats: StateFlow<DashboardStats> = _dashboardStats.asStateFlow()
 
+    private var currentUserId: String? = null
+
     init {
         loadUserData()
-        loadDashboardStats()
     }
 
     private fun loadUserData() {
@@ -50,12 +53,16 @@ class MainViewModel @Inject constructor(
                 val result = getCurrentUserProfileUseCase()
                 if (result.isSuccess) {
                     val user = result.getOrThrow()
+                    currentUserId = user.id // Guardar el userId
+
                     _userData.value = DashboardUser(
                         name = user.getDisplayName(),
                         email = user.email,
                         grade = user.grade,
                         section = user.section ?: ""
                     )
+
+                    loadDashboardStats()
                 }
             } catch (e: Exception) {
                 // Fallback a datos básicos si hay error
@@ -67,12 +74,20 @@ class MainViewModel @Inject constructor(
     private fun loadDashboardStats() {
         viewModelScope.launch {
             try {
+                // Cargar horarios de hoy
                 val todaySchedules = getTodaySchedulesUseCase()
                 val nextClass = calculateNextClass(todaySchedules)
 
+                val pendingTasksCount = if (currentUserId != null) {
+                    val result = getPendingTasksCountUseCase(currentUserId!!)
+                    if (result.isSuccess) result.getOrThrow() else 0
+                } else {
+                    0
+                }
+
                 _dashboardStats.value = DashboardStats(
                     todayClasses = todaySchedules.size,
-                    pendingTasks = 0,
+                    pendingTasks = pendingTasksCount,
                     nextClassTime = nextClass
                 )
             } catch (e: Exception) {
@@ -98,6 +113,5 @@ class MainViewModel @Inject constructor(
     // Función para refrescar datos
     fun refreshData() {
         loadUserData()
-        loadDashboardStats()
     }
 }

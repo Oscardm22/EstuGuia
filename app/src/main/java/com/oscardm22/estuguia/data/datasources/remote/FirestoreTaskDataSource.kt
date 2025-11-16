@@ -106,4 +106,20 @@ class FirestoreTaskDataSource @Inject constructor(
             .await()
             .toObjects(TaskDto::class.java)
     }
+
+    suspend fun getPendingTasksCount(userId: String): Int {
+        return try {
+            val query = firestore.collection(TASKS_COLLECTION)
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("status", "PENDING")
+                .get()
+                .await()
+
+            query.documents.size
+        } catch (e: Exception) {
+            // Log del error para debugging
+            println("Error getting pending tasks count: ${e.message}")
+            0
+        }
+    }
 }

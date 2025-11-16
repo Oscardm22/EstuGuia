@@ -102,6 +102,10 @@ class TaskRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPendingTasksCount(userId: String): Int {
+        return taskDataSource.getPendingTasksCount(userId)
+    }
+
     // Extension functions para conversión
     private fun Task.toDto(userId: String): TaskDto {
         return TaskDto(
