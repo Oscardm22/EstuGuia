@@ -1,6 +1,5 @@
 package com.oscardm22.estuguia.presentation.features.tasks.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oscardm22.estuguia.domain.models.Schedule
@@ -61,31 +60,19 @@ class TaskViewModel @Inject constructor(
     }
 
     fun loadSchedules(userId: String) {
-        Log.d("DEBUG", "TaskViewModel - loadSchedules: Iniciando con userId: $userId")
         viewModelScope.launch {
             try {
-                Log.d("DEBUG", "TaskViewModel - loadSchedules: Llamando getSchedulesUseCase")
                 val result = getSchedulesUseCase(userId)
-                Log.d("DEBUG", "TaskViewModel - loadSchedules: UseCase retornó: $result")
 
                 if (result.isSuccess) {
                     val schedulesList = result.getOrThrow()
-                    Log.d("DEBUG", "TaskViewModel - loadSchedules: Success, loaded ${schedulesList.size} schedules")
-                    if (schedulesList.isNotEmpty()) {
-                        Log.d("DEBUG", "TaskViewModel - loadSchedules: First schedule: ${schedulesList.first().courseName}")
-                    }
                     _schedules.value = schedulesList
                 } else {
-                    Log.e("DEBUG", "TaskViewModel - loadSchedules: UseCase failed: ${result.exceptionOrNull()?.message}")
-                    // Si falla, usar datos mock
                     val mockSchedules = getMockSchedules()
-                    Log.d("DEBUG", "TaskViewModel - loadSchedules: Using mock data with ${mockSchedules.size} schedules")
                     _schedules.value = mockSchedules
                 }
             } catch (e: Exception) {
-                Log.e("DEBUG", "TaskViewModel - loadSchedules: Exception: ${e.message}")
                 val mockSchedules = getMockSchedules()
-                Log.d("DEBUG", "TaskViewModel - loadSchedules: Using mock data due to exception")
                 _schedules.value = mockSchedules
             }
         }
@@ -125,46 +112,28 @@ class TaskViewModel @Inject constructor(
     }
 
     fun addTask(task: Task, userId: String) {
-        Log.d("DEBUG", "TaskViewModel - addTask: Iniciando, título: ${task.title}, userId: $userId")
-
-        Log.d("DEBUG", "TaskViewModel - addTask: Verificando dependencias...")
-        Log.d("DEBUG", "TaskViewModel - addTask: addTaskUseCase = ${addTaskUseCase != null}")
-        Log.d("DEBUG", "TaskViewModel - addTask: getTasksUseCase = ${getTasksUseCase != null}")
-        Log.d("DEBUG", "TaskViewModel - addTask: getSchedulesUseCase = ${getSchedulesUseCase != null}")
-
         _state.update { it.copy(isLoading = true, error = null) }
 
-        Log.d("DEBUG", "TaskViewModel - addTask: 🚀 ANTES de viewModelScope.launch")
-
         viewModelScope.launch {
-            Log.d("DEBUG", "TaskViewModel - addTask: ✅ FINALMENTE Dentro de coroutine")
             try {
-                Log.d("DEBUG", "TaskViewModel - addTask: 📞 Llamando addTaskUseCase")
-
                 val result = addTaskUseCase(task.copy(id = ""), userId)
-                Log.d("DEBUG", "TaskViewModel - addTask: 🔄 UseCase retornó: $result")
 
                 if (result.isSuccess) {
-                    Log.d("DEBUG", "TaskViewModel - addTask: ✅ Tarea guardada exitosamente")
                     loadTasks(userId)
                 } else {
                     val error = result.exceptionOrNull()?.message ?: "Error adding task"
-                    Log.e("DEBUG", "TaskViewModel - addTask: ❌ Error: $error")
                     _state.update { it.copy(
                         error = error,
                         isLoading = false
                     ) }
                 }
             } catch (e: Exception) {
-                Log.e("DEBUG", "TaskViewModel - addTask: 💥 Excepción: ${e.message}")
                 _state.update { it.copy(
                     error = e.message ?: "Unknown error",
                     isLoading = false
                 ) }
             }
         }
-
-        Log.d("DEBUG", "TaskViewModel - addTask: 🏁 DESPUÉS de viewModelScope.launch")
     }
 
     fun updateTask(task: Task, userId: String) {

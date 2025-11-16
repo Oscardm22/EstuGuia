@@ -3,14 +3,12 @@ package com.oscardm22.estuguia.presentation.features.tasks.ui.fragments
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.oscardm22.estuguia.databinding.FragmentAddTaskBinding
@@ -60,13 +58,11 @@ class AddTaskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("DEBUG", "AddTaskFragment - onViewCreated: Iniciando fragment")
-
         setupClickListeners()
         setupObservers()
         setupPrioritySelector()
         setupReminderSelector()
-        loadSchedules() // Cargar las materias/horarios
+        loadSchedules()
     }
 
     private fun setupClickListeners() {
@@ -86,62 +82,35 @@ class AddTaskFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        Log.d("DEBUG", "AddTaskFragment - setupObservers: Configurando observadores")
-
-        // Observar los horarios del ViewModel
         viewLifecycleOwner.lifecycleScope.launch {
-            Log.d("DEBUG", "AddTaskFragment - Observer: Iniciando collector de schedules")
-
             viewModel.schedules.collect { schedulesList ->
-                Log.d("DEBUG", "AddTaskFragment - Observer: Received schedules list with ${schedulesList.size} items")
-
-                if (schedulesList.isNotEmpty()) {
-                    Log.d("DEBUG", "AddTaskFragment - Observer: First schedule: ${schedulesList.first().courseName}")
-                } else {
-                    Log.d("DEBUG", "AddTaskFragment - Observer: schedulesList is EMPTY")
-                }
-
                 schedules.clear()
                 scheduleNames.clear()
 
                 schedules.addAll(schedulesList)
-                Log.d("DEBUG", "AddTaskFragment - Observer: schedules list now has ${schedules.size} items")
 
-                // Agregar opción "Sin materia específica"
                 scheduleNames.add("Sin materia específica")
-                Log.d("DEBUG", "AddTaskFragment - Observer: Added default option")
 
-                // Agregar las materias del usuario
                 schedulesList.forEach { schedule ->
                     val scheduleName = "${schedule.courseName} - ${getDayName(schedule.dayOfWeek)}"
                     scheduleNames.add(scheduleName)
-                    Log.d("DEBUG", "AddTaskFragment - Observer: Added schedule: $scheduleName")
                 }
 
-                Log.d("DEBUG", "AddTaskFragment - Observer: scheduleNames now has ${scheduleNames.size} items")
                 setupScheduleSpinner()
             }
         }
 
-        // También observar el estado para posibles errores
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.state.collect { state ->
                 if (state.error != null) {
-                    Log.e("DEBUG", "AddTaskFragment - Error in state: ${state.error}")
-                }
-                if (state.isLoading) {
-                    Log.d("DEBUG", "AddTaskFragment - Loading state: true")
+                    // Mostrar error al usuario
                 }
             }
         }
     }
 
     private fun setupScheduleSpinner() {
-        Log.d("DEBUG", "AddTaskFragment - setupScheduleSpinner: Configurando spinner con ${scheduleNames.size} items")
-
         if (scheduleNames.isEmpty()) {
-            Log.w("DEBUG", "AddTaskFragment - setupScheduleSpinner: scheduleNames está vacío, usando datos de prueba")
-            // Datos de fallback
             scheduleNames.add("Sin materia específica")
             scheduleNames.add("Matemáticas - Lunes")
             scheduleNames.add("Programación - Miércoles")
@@ -155,30 +124,20 @@ class AddTaskFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerSchedule.adapter = adapter
 
-        Log.d("DEBUG", "AddTaskFragment - setupScheduleSpinner: Adapter configurado con ${adapter.count} items")
-        Log.d("DEBUG", "AddTaskFragment - setupScheduleSpinner: Spinner tiene ${binding.spinnerSchedule.count} items")
-
-        // Listener para cuando se selecciona una materia
         binding.spinnerSchedule.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Log.d("DEBUG", "AddTaskFragment - Spinner item selected: position=$position")
                 if (position == 0) {
                     selectedScheduleId = ""
-                    Log.d("DEBUG", "AddTaskFragment - No specific subject selected")
                 } else {
                     val scheduleIndex = position - 1
                     if (scheduleIndex < schedules.size) {
                         selectedScheduleId = schedules[scheduleIndex].id
-                        Log.d("DEBUG", "AddTaskFragment - Selected schedule ID: $selectedScheduleId, Name: ${schedules[scheduleIndex].courseName}")
-                    } else {
-                        Log.w("DEBUG", "AddTaskFragment - scheduleIndex out of bounds: $scheduleIndex, schedules size: ${schedules.size}")
                     }
                 }
             }
 
             override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {
                 selectedScheduleId = ""
-                Log.d("DEBUG", "AddTaskFragment - Nothing selected in spinner")
             }
         }
     }
@@ -200,10 +159,8 @@ class AddTaskFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val userId = getCurrentUserId()
             if (userId != null) {
-                Log.d("DEBUG", "AddTaskFragment - loadSchedules: Llamando viewModel.loadSchedules con userId: $userId")
                 viewModel.loadSchedules(userId)
             } else {
-                Log.e("DEBUG", "AddTaskFragment - loadSchedules: No se pudo obtener userId")
                 handleUserNotAuthenticated()
             }
         }
@@ -211,28 +168,19 @@ class AddTaskFragment : Fragment() {
 
     private suspend fun getCurrentUserId(): String? {
         return try {
-            authRepository.getCurrentUserId().also { userId ->
-                if (userId != null) {
-                    Log.d("DEBUG", "AddTaskFragment - getCurrentUserId: ✅ Usuario autenticado, ID: $userId")
-                } else {
-                    Log.e("DEBUG", "AddTaskFragment - getCurrentUserId: ❌ No hay usuario autenticado")
-                }
-            }
+            authRepository.getCurrentUserId()
         } catch (e: Exception) {
-            Log.e("DEBUG", "AddTaskFragment - getCurrentUserId: 💥 Error: ${e.message}")
             null
         }
     }
 
     private fun handleUserNotAuthenticated() {
-        // Mostrar mensaje al usuario
         android.widget.Toast.makeText(
             requireContext(),
             "Debes iniciar sesión para agregar tareas",
             android.widget.Toast.LENGTH_LONG
         ).show()
 
-        // Opcional: redirigir al login después de un tiempo
         binding.root.postDelayed({
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }, 2000)
@@ -372,18 +320,12 @@ class AddTaskFragment : Fragment() {
     }
 
     private fun saveTask() {
-        Log.d("DEBUG", "AddTaskFragment - saveTask: Iniciando guardado de tarea")
-
         viewLifecycleOwner.lifecycleScope.launch {
             val userId = getCurrentUserId()
             if (userId == null) {
-                Log.e("DEBUG", "AddTaskFragment - saveTask: userId es nulo")
                 handleUserNotAuthenticated()
                 return@launch
             }
-
-            Log.d("DEBUG", "AddTaskFragment - saveTask: userId obtenido: $userId")
-            Log.d("DEBUG", "AddTaskFragment - saveTask: scheduleId seleccionado: $selectedScheduleId")
 
             val newTask = Task(
                 title = binding.editTextTitle.text.toString(),
@@ -395,11 +337,7 @@ class AddTaskFragment : Fragment() {
                 reminderTime = calculateReminderTime()
             )
 
-            Log.d("DEBUG", "AddTaskFragment - saveTask: Tarea creada: ${newTask.title}")
-
             viewModel.addTask(newTask, userId)
-            Log.d("DEBUG", "AddTaskFragment - saveTask: ViewModel.addTask llamado")
-
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
