@@ -10,10 +10,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.oscardm22.estuguia.databinding.FragmentTasksBinding
+import com.oscardm22.estuguia.domain.repositories.AuthRepository
 import com.oscardm22.estuguia.presentation.features.tasks.ui.adapters.TaskAdapter
 import com.oscardm22.estuguia.presentation.features.tasks.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TasksFragment : Fragment() {
@@ -21,6 +23,10 @@ class TasksFragment : Fragment() {
     private var _binding: FragmentTasksBinding? = null
     private val binding get() = _binding!!
     private val viewModel: TaskViewModel by viewModels()
+
+    @Inject
+    lateinit var authRepository: AuthRepository
+
     private lateinit var taskAdapter: TaskAdapter
 
     override fun onCreateView(
@@ -39,9 +45,15 @@ class TasksFragment : Fragment() {
         setupObservers()
         setupClickListeners()
 
-        // Cargar tareas
-        val userId = getCurrentUserId()
-        viewModel.loadTasks(userId)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                viewModel.loadTasks(userId)
+            } else {
+                // Manejar caso de usuario no autenticado
+                showError("Usuario no autenticado")
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -54,9 +66,13 @@ class TasksFragment : Fragment() {
             },
             onStatusChange = { task, newStatus ->
                 // Actualizar estado de la tarea
-                val updatedTask = task.copy(status = newStatus)
-                val userId = getCurrentUserId()
-                viewModel.updateTask(updatedTask, userId)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val userId = getCurrentUserId()
+                    if (userId != null) {
+                        val updatedTask = task.copy(status = newStatus)
+                        viewModel.updateTask(updatedTask, userId)
+                    }
+                }
             }
         )
 
@@ -72,7 +88,6 @@ class TasksFragment : Fragment() {
                 binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
 
                 if (state.error != null) {
-                    // Mostrar error
                     showError(state.error)
                 }
 
@@ -91,25 +106,31 @@ class TasksFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.fabAddTask.setOnClickListener {
-            // Navegar al fragment de agregar tarea
             navigateToAddTask()
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            val userId = getCurrentUserId()
-            viewModel.loadTasks(userId)
-            binding.swipeRefreshLayout.isRefreshing = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                val userId = getCurrentUserId()
+                if (userId != null) {
+                    viewModel.loadTasks(userId)
+                }
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
         }
     }
 
-    private fun getCurrentUserId(): String {
-        // Implementar - obtener del usuario autenticado
-        // Por ejemplo: FirebaseAuth.getInstance().currentUser?.uid ?: ""
-        return "user_id_placeholder"
+    private suspend fun getCurrentUserId(): String? {
+        return try {
+            authRepository.getCurrentUserId()
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun showError(message: String) {
         // Mostrar snackbar o toast con el error
+        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
     }
 
     private fun navigateToAddTask() {
