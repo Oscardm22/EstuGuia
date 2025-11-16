@@ -217,4 +217,43 @@ class TaskViewModel @Inject constructor(
     fun clearError() {
         _state.update { it.copy(error = null) }
     }
+
+    fun getTasksByStatus(userId: String, status: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true) }
+            try {
+                // Convertir el string a TaskStatus
+                val taskStatus = when (status) {
+                    "pending" -> TaskStatus.PENDING
+                    "in_progress" -> TaskStatus.IN_PROGRESS
+                    "completed" -> TaskStatus.COMPLETED
+                    else -> null
+                }
+
+                if (taskStatus != null) {
+                    val result = getTasksByStatusUseCase(taskStatus, userId)
+                    if (result.isSuccess) {
+                        _state.update { it.copy(
+                            tasks = result.getOrThrow(),
+                            isLoading = false,
+                            error = null
+                        ) }
+                    } else {
+                        _state.update { it.copy(
+                            error = result.exceptionOrNull()?.message ?: "Error filtering tasks",
+                            isLoading = false
+                        ) }
+                    }
+                } else {
+                    // Si no hay status válido, cargar todas las tareas
+                    loadTasks(userId)
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(
+                    error = e.message ?: "Unknown error",
+                    isLoading = false
+                ) }
+            }
+        }
+    }
 }
