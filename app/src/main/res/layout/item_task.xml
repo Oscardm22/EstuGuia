@@ -31,7 +31,7 @@
                 android:id="@+id/textTaskTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Título de la tarea"
+                android:text="@string/task_title"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Descripción de la tarea"
+                android:text="@string/task_description"
                 android:textSize="14sp"
                 android:textColor="@color/gray_600"
                 android:maxLines="2"
@@ -58,11 +58,11 @@
                     android:id="@+id/textDueDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="01/01/2024"
+                    android:text="@string/due_date"
                     android:textSize="12sp"
                     android:textColor="@color/gray_500"
-                    android:drawableStart="@drawable/ic_calendar"
-                    android:drawablePadding="4dp" />
+                    android:drawablePadding="4dp"
+                    app:drawableStartCompat="@drawable/ic_calendar" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/textPriority"

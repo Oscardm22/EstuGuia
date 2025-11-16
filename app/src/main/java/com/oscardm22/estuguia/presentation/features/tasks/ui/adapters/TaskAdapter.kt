@@ -37,6 +37,8 @@ class TaskAdapter(
 
         fun bind(task: Task) {
             binding.apply {
+                checkboxCompleted.setOnCheckedChangeListener(null)
+
                 textTaskTitle.text = task.title
                 textTaskDescription.text = task.description
                 textDueDate.text = formatDate(task.dueDate)
@@ -48,7 +50,7 @@ class TaskAdapter(
                 // Establecer estado
                 setStatusStyle(task.status)
 
-                // Checkbox para estado
+                // Checkbox para estado - establecer después de remover listener
                 checkboxCompleted.isChecked = task.status == TaskStatus.COMPLETED
 
                 // Listeners
@@ -61,6 +63,7 @@ class TaskAdapter(
                     true
                 }
 
+                // Agregar el listener después de establecer el estado inicial
                 checkboxCompleted.setOnCheckedChangeListener { _, isChecked ->
                     val newStatus = if (isChecked) TaskStatus.COMPLETED else TaskStatus.PENDING
                     onStatusChange(task, newStatus)
@@ -99,7 +102,6 @@ class TaskAdapter(
         }
 
         private fun formatDate(date: java.util.Date): String {
-            // Implementar formateo de fecha
             val formatter = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
             return formatter.format(date)
         }
