@@ -9,8 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.oscardm22.estuguia.R
 import com.oscardm22.estuguia.databinding.FragmentTasksBinding
 import com.oscardm22.estuguia.domain.repositories.AuthRepository
@@ -148,26 +146,17 @@ class TasksFragment : Fragment() {
     }
 
     private fun setupFilterListeners() {
-        val chipGroup = binding.filterComponent.root.findViewById<ChipGroup>(R.id.chipGroup)
+        val chipGroup = binding.filterComponent.root.findViewById<com.google.android.material.chip.ChipGroup>(R.id.chipGroup)
 
-        binding.filterComponent.root.findViewById<Chip>(R.id.chipAll).setOnClickListener {
-            println("DEBUG: Chip All clicked")
-            applyFilter(null)
-        }
-
-        binding.filterComponent.root.findViewById<Chip>(R.id.chipPending).setOnClickListener {
-            println("DEBUG: Chip Pending clicked")
-            applyFilter("pending")
-        }
-
-        binding.filterComponent.root.findViewById<Chip>(R.id.chipInProgress).setOnClickListener {
-            println("DEBUG: Chip In Progress clicked")
-            applyFilter("in_progress")
-        }
-
-        binding.filterComponent.root.findViewById<Chip>(R.id.chipCompleted).setOnClickListener {
-            println("DEBUG: Chip Completed clicked")
-            applyFilter("completed")
+        // Configurar listener del ChipGroup para manejar la selección automática
+        chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+            when (checkedIds.firstOrNull()) {
+                R.id.chipAll -> applyFilter(null)
+                R.id.chipPending -> applyFilter("pending")
+                R.id.chipInProgress -> applyFilter("in_progress")
+                R.id.chipCompleted -> applyFilter("completed")
+                else -> applyFilter(null)
+            }
         }
 
         chipGroup.check(R.id.chipAll)
