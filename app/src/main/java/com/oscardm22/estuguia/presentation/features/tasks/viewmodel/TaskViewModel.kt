@@ -124,34 +124,54 @@ class TaskViewModel @Inject constructor(
         )
     }
 
-    // ... el resto de tus métodos permanecen igual ...
     fun addTask(task: Task, userId: String) {
+        Log.d("DEBUG", "TaskViewModel - addTask: Iniciando, título: ${task.title}, userId: $userId")
+
+        Log.d("DEBUG", "TaskViewModel - addTask: Verificando dependencias...")
+        Log.d("DEBUG", "TaskViewModel - addTask: addTaskUseCase = ${addTaskUseCase != null}")
+        Log.d("DEBUG", "TaskViewModel - addTask: getTasksUseCase = ${getTasksUseCase != null}")
+        Log.d("DEBUG", "TaskViewModel - addTask: getSchedulesUseCase = ${getSchedulesUseCase != null}")
+
         _state.update { it.copy(isLoading = true, error = null) }
+
+        Log.d("DEBUG", "TaskViewModel - addTask: 🚀 ANTES de viewModelScope.launch")
+
         viewModelScope.launch {
+            Log.d("DEBUG", "TaskViewModel - addTask: ✅ FINALMENTE Dentro de coroutine")
             try {
-                val result = addTaskUseCase(task.copy(id = ""))
+                Log.d("DEBUG", "TaskViewModel - addTask: 📞 Llamando addTaskUseCase")
+
+                val result = addTaskUseCase(task.copy(id = ""), userId)
+                Log.d("DEBUG", "TaskViewModel - addTask: 🔄 UseCase retornó: $result")
+
                 if (result.isSuccess) {
+                    Log.d("DEBUG", "TaskViewModel - addTask: ✅ Tarea guardada exitosamente")
                     loadTasks(userId)
                 } else {
+                    val error = result.exceptionOrNull()?.message ?: "Error adding task"
+                    Log.e("DEBUG", "TaskViewModel - addTask: ❌ Error: $error")
                     _state.update { it.copy(
-                        error = result.exceptionOrNull()?.message ?: "Error adding task",
+                        error = error,
                         isLoading = false
                     ) }
                 }
             } catch (e: Exception) {
+                Log.e("DEBUG", "TaskViewModel - addTask: 💥 Excepción: ${e.message}")
                 _state.update { it.copy(
                     error = e.message ?: "Unknown error",
                     isLoading = false
                 ) }
             }
         }
+
+        Log.d("DEBUG", "TaskViewModel - addTask: 🏁 DESPUÉS de viewModelScope.launch")
     }
 
     fun updateTask(task: Task, userId: String) {
         _state.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                val result = updateTaskUseCase(task)
+                val result = updateTaskUseCase(task, userId)
                 if (result.isSuccess) {
                     loadTasks(userId)
                 } else {
@@ -200,7 +220,7 @@ class TaskViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = if (status != null) {
-                    getTasksByStatusUseCase(status)
+                    getTasksByStatusUseCase(status, userId)
                 } else {
                     getTasksUseCase(userId)
                 }

@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetTasksByStatusUseCase @Inject constructor(
     private val taskRepository: TaskRepository
 ) {
-    suspend operator fun invoke(status: TaskStatus): Result<List<Task>> {
-        return taskRepository.getTasksByStatus(status)
+    suspend operator fun invoke(status: TaskStatus, userId: String): Result<List<Task>> {
+        return taskRepository.getTasksByStatus(status, userId)
     }
 }

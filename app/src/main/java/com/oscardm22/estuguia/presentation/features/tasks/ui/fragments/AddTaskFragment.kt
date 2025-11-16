@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
@@ -20,7 +21,6 @@ import com.oscardm22.estuguia.domain.repositories.AuthRepository
 import com.oscardm22.estuguia.presentation.features.tasks.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar
@@ -31,7 +31,7 @@ class AddTaskFragment : Fragment() {
 
     private var _binding: FragmentAddTaskBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TaskViewModel by viewModels()
+    private val viewModel: TaskViewModel by activityViewModels()
 
     @Inject
     lateinit var authRepository: AuthRepository
@@ -197,30 +197,30 @@ class AddTaskFragment : Fragment() {
     }
 
     private fun loadSchedules() {
-        val userId = getCurrentUserId()
-        Log.d("DEBUG", "AddTaskFragment - loadSchedules: Llamando viewModel.loadSchedules con userId: $userId")
-        viewModel.loadSchedules(userId)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                Log.d("DEBUG", "AddTaskFragment - loadSchedules: Llamando viewModel.loadSchedules con userId: $userId")
+                viewModel.loadSchedules(userId)
+            } else {
+                Log.e("DEBUG", "AddTaskFragment - loadSchedules: No se pudo obtener userId")
+                handleUserNotAuthenticated()
+            }
+        }
     }
 
-    private fun getCurrentUserId(): String {
+    private suspend fun getCurrentUserId(): String? {
         return try {
-            // Usar runBlocking para llamar a la función suspend
-            runBlocking {
-                authRepository.getCurrentUserId().also { userId ->
-                    if (userId != null) {
-                        Log.d("DEBUG", "AddTaskFragment - getCurrentUserId: ✅ Usuario autenticado, ID: $userId")
-                    } else {
-                        Log.e("DEBUG", "AddTaskFragment - getCurrentUserId: ❌ No hay usuario autenticado")
-                    }
+            authRepository.getCurrentUserId().also { userId ->
+                if (userId != null) {
+                    Log.d("DEBUG", "AddTaskFragment - getCurrentUserId: ✅ Usuario autenticado, ID: $userId")
+                } else {
+                    Log.e("DEBUG", "AddTaskFragment - getCurrentUserId: ❌ No hay usuario autenticado")
                 }
-            } ?: run {
-                handleUserNotAuthenticated()
-                "no_user_authenticated"
             }
         } catch (e: Exception) {
             Log.e("DEBUG", "AddTaskFragment - getCurrentUserId: 💥 Error: ${e.message}")
-            handleUserNotAuthenticated()
-            "error_getting_user"
+            null
         }
     }
 
@@ -237,8 +237,6 @@ class AddTaskFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }, 2000)
     }
-
-    // ... (el resto de los métodos se mantienen igual - setupPrioritySelector, showDatePicker, saveTask, etc.) ...
 
     private fun setupPrioritySelector() {
         binding.chipLow.setOnClickListener { onPrioritySelected(TaskPriority.LOW, binding.chipLow) }
@@ -374,27 +372,36 @@ class AddTaskFragment : Fragment() {
     }
 
     private fun saveTask() {
-        val title = binding.editTextTitle.text.toString()
-        val description = binding.editTextDescription.text.toString()
-        val dueDate = selectedDueDate.time
-        val priority = selectedPriority
-        val reminderTime = calculateReminderTime()
+        Log.d("DEBUG", "AddTaskFragment - saveTask: Iniciando guardado de tarea")
 
-        Log.d("DEBUG", "AddTaskFragment - saveTask: Guardando tarea con scheduleId: $selectedScheduleId")
+        viewLifecycleOwner.lifecycleScope.launch {
+            val userId = getCurrentUserId()
+            if (userId == null) {
+                Log.e("DEBUG", "AddTaskFragment - saveTask: userId es nulo")
+                handleUserNotAuthenticated()
+                return@launch
+            }
 
-        val newTask = Task(
-            title = title,
-            description = description,
-            scheduleId = selectedScheduleId,
-            dueDate = dueDate,
-            priority = priority,
-            status = TaskStatus.PENDING,
-            reminderTime = reminderTime
-        )
+            Log.d("DEBUG", "AddTaskFragment - saveTask: userId obtenido: $userId")
+            Log.d("DEBUG", "AddTaskFragment - saveTask: scheduleId seleccionado: $selectedScheduleId")
 
-        val userId = getCurrentUserId()
-        viewModel.addTask(newTask, userId)
-        requireActivity().onBackPressedDispatcher.onBackPressed()
+            val newTask = Task(
+                title = binding.editTextTitle.text.toString(),
+                description = binding.editTextDescription.text.toString(),
+                scheduleId = selectedScheduleId,
+                dueDate = selectedDueDate.time,
+                priority = selectedPriority,
+                status = TaskStatus.PENDING,
+                reminderTime = calculateReminderTime()
+            )
+
+            Log.d("DEBUG", "AddTaskFragment - saveTask: Tarea creada: ${newTask.title}")
+
+            viewModel.addTask(newTask, userId)
+            Log.d("DEBUG", "AddTaskFragment - saveTask: ViewModel.addTask llamado")
+
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     override fun onDestroyView() {

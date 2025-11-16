@@ -12,9 +12,9 @@ class TaskRepositoryImpl @Inject constructor(
     private val taskDataSource: FirestoreTaskDataSource
 ) : TaskRepository {
 
-    override suspend fun addTask(task: Task): Result<String> {
+    override suspend fun addTask(task: Task, userId: String): Result<String> {
         return try {
-            val taskDto = task.toDto()
+            val taskDto = task.toDto(userId)
             val taskId = taskDataSource.addTask(taskDto)
             Result.success(taskId)
         } catch (e: Exception) {
@@ -45,9 +45,9 @@ class TaskRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateTask(task: Task): Result<Boolean> {
+    override suspend fun updateTask(task: Task, userId: String): Result<Boolean> {
         return try {
-            val taskDto = task.toDto()
+            val taskDto = task.toDto(userId)
             val success = taskDataSource.updateTask(taskDto)
             if (success) {
                 Result.success(true)
@@ -72,9 +72,8 @@ class TaskRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTasksBySchedule(scheduleId: String): Result<List<Task>> {
+    override suspend fun getTasksBySchedule(scheduleId: String, userId: String): Result<List<Task>> {
         return try {
-            val userId = ""
             val tasksDto = taskDataSource.getTasksBySchedule(userId, scheduleId)
             val tasks = tasksDto.map { it.toDomain() }
             Result.success(tasks)
@@ -83,9 +82,8 @@ class TaskRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getTasksByStatus(status: TaskStatus): Result<List<Task>> {
+    override suspend fun getTasksByStatus(status: TaskStatus, userId: String): Result<List<Task>> {
         return try {
-            val userId = "" // Obtener del usuario autenticado
             val tasksDto = taskDataSource.getTasksByStatus(userId, status.name)
             val tasks = tasksDto.map { it.toDomain() }
             Result.success(tasks)
@@ -105,7 +103,7 @@ class TaskRepositoryImpl @Inject constructor(
     }
 
     // Extension functions para conversión
-    private fun Task.toDto(): TaskDto {
+    private fun Task.toDto(userId: String): TaskDto {
         return TaskDto(
             id = id,
             title = title,
@@ -117,7 +115,7 @@ class TaskRepositoryImpl @Inject constructor(
             reminderTime = reminderTime,
             createdAt = createdAt,
             updatedAt = updatedAt,
-            userId = ""
+            userId = userId
         )
     }
 

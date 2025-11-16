@@ -7,7 +7,7 @@ import javax.inject.Inject
 class AddTaskUseCase @Inject constructor(
     private val taskRepository: TaskRepository
 ) {
-    suspend operator fun invoke(task: Task): Result<String> {
-        return taskRepository.addTask(task)
+    suspend operator fun invoke(task: Task, userId: String): Result<String> {
+        return taskRepository.addTask(task, userId)
     }
 }
