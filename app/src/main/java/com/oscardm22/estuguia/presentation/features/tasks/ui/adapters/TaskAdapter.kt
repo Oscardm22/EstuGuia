@@ -42,7 +42,7 @@ class TaskAdapter(
                 textTaskTitle.text = task.title
                 textTaskDescription.text = task.description
                 textDueDate.text = formatDate(task.dueDate)
-                textPriority.text = task.priority.name
+                textPriority.text = getPriorityText(task.priority)
 
                 // Establecer color según prioridad
                 setPriorityStyle(task.priority)
@@ -50,7 +50,7 @@ class TaskAdapter(
                 // Establecer estado
                 setStatusStyle(task.status)
 
-                // Checkbox para estado - establecer después de remover listener
+                // Checkbox para estado
                 checkboxCompleted.isChecked = task.status == TaskStatus.COMPLETED
 
                 // Listeners
@@ -68,6 +68,14 @@ class TaskAdapter(
                     val newStatus = if (isChecked) TaskStatus.COMPLETED else TaskStatus.PENDING
                     onStatusChange(task, newStatus)
                 }
+            }
+        }
+
+        private fun getPriorityText(priority: TaskPriority): String {
+            return when (priority) {
+                TaskPriority.LOW -> binding.root.context.getString(R.string.priority_low)
+                TaskPriority.MEDIUM -> binding.root.context.getString(R.string.priority_medium)
+                TaskPriority.HIGH -> binding.root.context.getString(R.string.priority_high)
             }
         }
 
