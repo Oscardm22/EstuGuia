@@ -39,6 +39,24 @@ class DashboardFragment : Fragment() {
         setupClickListeners()
         setupObservers()
         updateGreeting()
+        loadInitialData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshData()
+    }
+
+    private fun loadInitialData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.refreshData()
+        }
+    }
+
+    private fun refreshData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.refreshData()
+        }
     }
 
     private fun setupUpcomingTasksRecyclerView() {
