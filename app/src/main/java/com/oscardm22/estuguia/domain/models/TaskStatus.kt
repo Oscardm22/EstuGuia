@@ -1,5 +1,9 @@
 package com.oscardm22.estuguia.domain.models
 
-enum class TaskStatus {
-    PENDING, IN_PROGRESS, COMPLETED, CANCELLED
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+enum class TaskStatus : Parcelable {
+    PENDING, IN_PROGRESS, COMPLETED
 }

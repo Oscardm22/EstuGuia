@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
 import com.oscardm22.estuguia.databinding.FragmentAddTaskBinding
 import com.oscardm22.estuguia.domain.models.Task
@@ -21,7 +22,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,6 +30,8 @@ class AddTaskFragment : Fragment() {
     private var _binding: FragmentAddTaskBinding? = null
     private val binding get() = _binding!!
     private val viewModel: TaskViewModel by activityViewModels()
+
+    private val args: AddTaskFragmentArgs by navArgs()
 
     @Inject
     lateinit var authRepository: AuthRepository
@@ -58,11 +60,58 @@ class AddTaskFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        args.task?.let { task ->
+            populateForm(task)
+        }
+
         setupClickListeners()
         setupObservers()
         setupPrioritySelector()
         setupReminderSelector()
         loadSchedules()
+    }
+
+    private fun populateForm(task: Task) {
+        with(binding) {
+            // Cargar datos básicos
+            editTextTitle.setText(task.title)
+            editTextDescription.setText(task.description)
+
+            // Cargar fecha de vencimiento
+            selectedDueDate.time = task.dueDate
+            updateDueDateButton()
+
+            // Cargar prioridad
+            selectedPriority = task.priority
+            when (task.priority) {
+                TaskPriority.LOW -> onPrioritySelected(TaskPriority.LOW, chipLow)
+                TaskPriority.MEDIUM -> onPrioritySelected(TaskPriority.MEDIUM, chipMedium)
+                TaskPriority.HIGH -> onPrioritySelected(TaskPriority.HIGH, chipHigh)
+            }
+
+            // Cargar recordatorio si existe
+            task.reminderTime?.let { reminderTime ->
+                val reminderCalendar = Calendar.getInstance().apply { time = reminderTime }
+                val dueCalendar = Calendar.getInstance().apply { time = task.dueDate }
+
+                val daysDifference = ((dueCalendar.timeInMillis - reminderCalendar.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+
+                when (daysDifference) {
+                    1 -> onReminderSelected(ReminderType.ONE_DAY_BEFORE, chipReminder1Day)
+                    2 -> onReminderSelected(ReminderType.TWO_DAYS_BEFORE, chipReminder2Days)
+                    3 -> onReminderSelected(ReminderType.THREE_DAYS_BEFORE, chipReminder3Days)
+                    else -> {
+                        customReminderTime = reminderCalendar
+                        onReminderSelected(ReminderType.CUSTOM, chipCustomReminder)
+                        updateCustomReminderChip()
+                    }
+                }
+            }
+
+            // Cambiar título y texto del botón si estamos editando
+            binding.textViewTitle.text = "Editar Tarea"
+            binding.btnSaveTask.text = "Actualizar Tarea"
+        }
     }
 
     private fun setupClickListeners() {
@@ -88,15 +137,21 @@ class AddTaskFragment : Fragment() {
                 scheduleNames.clear()
 
                 schedules.addAll(schedulesList)
-
                 scheduleNames.add("Sin materia específica")
-
                 schedulesList.forEach { schedule ->
                     val scheduleName = "${schedule.courseName} - ${getDayName(schedule.dayOfWeek)}"
                     scheduleNames.add(scheduleName)
                 }
-
                 setupScheduleSpinner()
+
+                args.task?.let { task ->
+                    if (task.scheduleId.isNotEmpty()) {
+                        val scheduleIndex = schedules.indexOfFirst { it.id == task.scheduleId }
+                        if (scheduleIndex != -1) {
+                            binding.spinnerSchedule.setSelection(scheduleIndex + 1)
+                        }
+                    }
+                }
             }
         }
 
@@ -104,6 +159,11 @@ class AddTaskFragment : Fragment() {
             viewModel.state.collect { state ->
                 if (state.error != null) {
                     // Mostrar error al usuario
+                    android.widget.Toast.makeText(
+                        requireContext(),
+                        state.error,
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -190,7 +250,11 @@ class AddTaskFragment : Fragment() {
         binding.chipLow.setOnClickListener { onPrioritySelected(TaskPriority.LOW, binding.chipLow) }
         binding.chipMedium.setOnClickListener { onPrioritySelected(TaskPriority.MEDIUM, binding.chipMedium) }
         binding.chipHigh.setOnClickListener { onPrioritySelected(TaskPriority.HIGH, binding.chipHigh) }
-        onPrioritySelected(TaskPriority.MEDIUM, binding.chipMedium)
+
+        // Solo establecer MEDIUM por defecto si no estamos editando
+        if (args.task == null) {
+            onPrioritySelected(TaskPriority.MEDIUM, binding.chipMedium)
+        }
     }
 
     private fun setupReminderSelector() {
@@ -202,7 +266,11 @@ class AddTaskFragment : Fragment() {
             onReminderSelected(ReminderType.CUSTOM, binding.chipCustomReminder)
             showCustomReminderPicker()
         }
-        onReminderSelected(ReminderType.NONE, binding.chipNoReminder)
+
+        // Solo establecer NONE por defecto si no estamos editando
+        if (args.task == null) {
+            onReminderSelected(ReminderType.NONE, binding.chipNoReminder)
+        }
     }
 
     private fun onPrioritySelected(priority: TaskPriority, selectedChip: Chip) {
@@ -327,17 +395,36 @@ class AddTaskFragment : Fragment() {
                 return@launch
             }
 
-            val newTask = Task(
-                title = binding.editTextTitle.text.toString(),
-                description = binding.editTextDescription.text.toString(),
-                scheduleId = selectedScheduleId,
-                dueDate = selectedDueDate.time,
-                priority = selectedPriority,
-                status = TaskStatus.PENDING,
-                reminderTime = calculateReminderTime()
-            )
+            val task = if (args.task != null) {
+                args.task!!.copy(
+                    title = binding.editTextTitle.text.toString(),
+                    description = binding.editTextDescription.text.toString(),
+                    scheduleId = selectedScheduleId,
+                    dueDate = selectedDueDate.time,
+                    priority = selectedPriority,
+                    reminderTime = calculateReminderTime(),
+                    updatedAt = Date()
+                )
+            } else {
+                Task(
+                    title = binding.editTextTitle.text.toString(),
+                    description = binding.editTextDescription.text.toString(),
+                    scheduleId = selectedScheduleId,
+                    dueDate = selectedDueDate.time,
+                    priority = selectedPriority,
+                    status = TaskStatus.PENDING,
+                    reminderTime = calculateReminderTime()
+                )
+            }
 
-            viewModel.addTask(newTask, userId)
+            if (args.task != null) {
+                // Actualizar tarea existente
+                viewModel.updateTask(task, userId)
+            } else {
+                // Crear nueva tarea
+                viewModel.addTask(task, userId)
+            }
+
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }

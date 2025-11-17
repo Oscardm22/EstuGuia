@@ -12,8 +12,8 @@ import com.oscardm22.estuguia.domain.models.TaskPriority
 import com.oscardm22.estuguia.domain.models.TaskStatus
 
 class TaskAdapter(
-    private val onTaskClick: (Task) -> Unit,
-    private val onTaskLongClick: (Task) -> Unit,
+    private val onEditClick: (Task) -> Unit,
+    private val onDeleteClick: (Task) -> Unit,
     private val onStatusChange: (Task, TaskStatus) -> Unit
 ) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallback) {
 
@@ -44,31 +44,41 @@ class TaskAdapter(
                 textDueDate.text = formatDate(task.dueDate)
                 textPriority.text = getPriorityText(task.priority)
 
-                // Establecer color según prioridad
                 setPriorityStyle(task.priority)
-
-                // Establecer estado
                 setStatusStyle(task.status)
 
-                // Checkbox para estado
                 checkboxCompleted.isChecked = task.status == TaskStatus.COMPLETED
 
                 // Listeners
                 root.setOnClickListener {
-                    onTaskClick(task)
+                    onEditClick(task)
                 }
 
-                root.setOnLongClickListener {
-                    onTaskLongClick(task)
-                    true
+                // Listener para el botón de opciones
+                btnOptions.setOnClickListener {
+                    showOptionsMenu(task)
                 }
 
-                // Agregar el listener después de establecer el estado inicial
                 checkboxCompleted.setOnCheckedChangeListener { _, isChecked ->
                     val newStatus = if (isChecked) TaskStatus.COMPLETED else TaskStatus.PENDING
                     onStatusChange(task, newStatus)
                 }
             }
+        }
+
+        private fun showOptionsMenu(task: Task) {
+            val options = arrayOf("Editar", "Eliminar")
+
+            androidx.appcompat.app.AlertDialog.Builder(binding.root.context)
+                .setTitle("Opciones de tarea")
+                .setItems(options) { _, which ->
+                    when (which) {
+                        0 -> onEditClick(task)
+                        1 -> onDeleteClick(task)
+                    }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
 
         private fun getPriorityText(priority: TaskPriority): String {

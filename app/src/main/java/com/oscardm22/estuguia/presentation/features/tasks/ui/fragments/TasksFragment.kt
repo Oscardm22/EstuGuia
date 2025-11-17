@@ -52,7 +52,6 @@ class TasksFragment : Fragment() {
             if (userId != null) {
                 viewModel.loadTasks(userId)
             } else {
-                // Manejar caso de usuario no autenticado
                 showError("Usuario no autenticado")
             }
         }
@@ -60,14 +59,13 @@ class TasksFragment : Fragment() {
 
     private fun setupRecyclerView() {
         taskAdapter = TaskAdapter(
-            onTaskClick = { task ->
-                // Navegar a detalle o edición
+            onEditClick = { task ->
+                navigateToAddTask(task)
             },
-            onTaskLongClick = { task ->
-                // Mostrar opciones (editar, eliminar, etc.)
+            onDeleteClick = { task ->
+                showDeleteConfirmation(task)
             },
             onStatusChange = { task, newStatus ->
-                // Actualizar estado de la tarea
                 viewLifecycleOwner.lifecycleScope.launch {
                     val userId = getCurrentUserId()
                     if (userId != null) {
@@ -122,6 +120,34 @@ class TasksFragment : Fragment() {
         }
     }
 
+    private fun navigateToAddTask(task: com.oscardm22.estuguia.domain.models.Task? = null) {
+        try {
+            // Usar Safe Args igual que en ScheduleFragment
+            val directions = TasksFragmentDirections.actionTasksFragmentToAddTaskFragment(
+                task = task
+            )
+            findNavController().navigate(directions)
+        } catch (e: Exception) {
+            showError("Error al navegar: ${e.message}")
+        }
+    }
+
+    private fun showDeleteConfirmation(task: com.oscardm22.estuguia.domain.models.Task) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Eliminar tarea")
+            .setMessage("¿Estás seguro de que quieres eliminar '${task.title}'?")
+            .setPositiveButton("Eliminar") { _, _ ->
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val userId = getCurrentUserId()
+                    if (userId != null) {
+                        viewModel.deleteTask(task.id, userId)
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
     private suspend fun getCurrentUserId(): String? {
         return try {
             authRepository.getCurrentUserId()
@@ -131,13 +157,7 @@ class TasksFragment : Fragment() {
     }
 
     private fun showError(message: String) {
-        // Mostrar snackbar o toast con el error
         android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT).show()
-    }
-
-    private fun navigateToAddTask() {
-        val action = TasksFragmentDirections.actionTasksFragmentToAddTaskFragment()
-        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {
@@ -148,7 +168,6 @@ class TasksFragment : Fragment() {
     private fun setupFilterListeners() {
         val chipGroup = binding.filterComponent.root.findViewById<com.google.android.material.chip.ChipGroup>(R.id.chipGroup)
 
-        // Configurar listener del ChipGroup para manejar la selección automática
         chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
             when (checkedIds.firstOrNull()) {
                 R.id.chipAll -> applyFilter(null)
@@ -166,9 +185,9 @@ class TasksFragment : Fragment() {
             val userId = getCurrentUserId()
             if (userId != null) {
                 if (status == null) {
-                    viewModel.loadTasks(userId) // Todas las tareas
+                    viewModel.loadTasks(userId)
                 } else {
-                    viewModel.getTasksByStatus(userId, status) // Filtrado por estado
+                    viewModel.getTasksByStatus(userId, status)
                 }
             }
         }

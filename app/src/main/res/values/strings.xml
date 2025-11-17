@@ -205,6 +205,7 @@
     <!-- Descripciones -->
     <string name="ic_expand_more">Icono de expandir</string>
     <string name="ic_add_task">Icono de agregar</string>
+    <string name="options">Opciones</string>
 
     <!-- Formatos -->
     <string name="schedule_time_format">%1$s - %2$s</string>
