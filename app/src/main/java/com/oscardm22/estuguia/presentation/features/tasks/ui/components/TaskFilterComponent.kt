@@ -40,11 +40,6 @@ class TaskFilterComponent @JvmOverloads constructor(
             onFilterChange?.invoke(TaskStatus.PENDING)
         }
 
-        binding.chipInProgress.setOnClickListener {
-            setActiveChip(binding.chipInProgress)
-            onFilterChange?.invoke(TaskStatus.IN_PROGRESS)
-        }
-
         binding.chipCompleted.setOnClickListener {
             setActiveChip(binding.chipCompleted)
             onFilterChange?.invoke(TaskStatus.COMPLETED)
@@ -55,7 +50,6 @@ class TaskFilterComponent @JvmOverloads constructor(
         listOf(
             binding.chipAll,
             binding.chipPending,
-            binding.chipInProgress,
             binding.chipCompleted
         ).forEach { chip ->
             chip.isChecked = chip == activeChip

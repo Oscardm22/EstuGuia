@@ -153,7 +153,6 @@ class TasksFragment : Fragment() {
             when (checkedIds.firstOrNull()) {
                 R.id.chipAll -> applyFilter(null)
                 R.id.chipPending -> applyFilter("pending")
-                R.id.chipInProgress -> applyFilter("in_progress")
                 R.id.chipCompleted -> applyFilter("completed")
                 else -> applyFilter(null)
             }

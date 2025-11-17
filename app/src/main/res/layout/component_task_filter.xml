@@ -45,15 +45,6 @@
             app:chipBackgroundColor="@color/chip_filter_background"
             app:checkedIconVisible="false" />
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chipInProgress"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/in_progress"
-            app:chipBackgroundColor="@color/chip_filter_background"
-            app:checkedIconVisible="false"
-            tools:ignore="PrivateResource" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipCompleted"
