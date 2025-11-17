@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.work.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

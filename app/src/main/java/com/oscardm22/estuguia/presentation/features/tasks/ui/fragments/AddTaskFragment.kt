@@ -17,6 +17,7 @@ import com.oscardm22.estuguia.domain.models.Task
 import com.oscardm22.estuguia.domain.models.TaskPriority
 import com.oscardm22.estuguia.domain.models.TaskStatus
 import com.oscardm22.estuguia.domain.repositories.AuthRepository
+import com.oscardm22.estuguia.domain.utils.NotificationScheduler
 import com.oscardm22.estuguia.presentation.features.tasks.viewmodel.TaskViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -396,6 +397,13 @@ class AddTaskFragment : Fragment() {
             }
 
             val task = if (args.task != null) {
+                args.task!!.reminderTime?.let { oldReminderTime ->
+                    NotificationScheduler.cancelTaskReminder(
+                        requireContext(),
+                        args.task!!.id
+                    )
+                }
+
                 args.task!!.copy(
                     title = binding.editTextTitle.text.toString(),
                     description = binding.editTextDescription.text.toString(),
@@ -407,6 +415,7 @@ class AddTaskFragment : Fragment() {
                 )
             } else {
                 Task(
+                    id = UUID.randomUUID().toString(),
                     title = binding.editTextTitle.text.toString(),
                     description = binding.editTextDescription.text.toString(),
                     scheduleId = selectedScheduleId,
@@ -417,11 +426,29 @@ class AddTaskFragment : Fragment() {
                 )
             }
 
+            // PROGRAMAR NOTIFICACIÓN si hay recordatorio
+            task.reminderTime?.let { reminderTime ->
+                val message = when (selectedReminderType) {
+                    ReminderType.ONE_DAY_BEFORE -> "Tu tarea '${task.title}' vence mañana"
+                    ReminderType.TWO_DAYS_BEFORE -> "Tu tarea '${task.title}' vence en 2 días"
+                    ReminderType.THREE_DAYS_BEFORE -> "Tu tarea '${task.title}' vence en 3 días"
+                    ReminderType.CUSTOM -> "Recordatorio: '${task.title}'"
+                    else -> "No olvides completar '${task.title}'"
+                }
+
+                NotificationScheduler.scheduleTaskReminder(
+                    context = requireContext(),
+                    taskId = task.id,
+                    taskTitle = task.title,
+                    reminderTime = reminderTime,
+                    message = message
+                )
+            }
+
+            // Guardar en ViewModel
             if (args.task != null) {
-                // Actualizar tarea existente
                 viewModel.updateTask(task, userId)
             } else {
-                // Crear nueva tarea
                 viewModel.addTask(task, userId)
             }
 
