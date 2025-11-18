@@ -154,6 +154,8 @@ class ProfileFragment : Fragment() {
             )
             viewModel.updateProfile(updatedUser)
         }
+
+        viewModel.setEditing(false)
     }
 
     private fun showPasswordDialog() {
