@@ -113,7 +113,9 @@ class ProfileFragment : Fragment() {
     private fun displayUserInfo(user: User) {
         binding.textUserName.text = user.getDisplayName()
         binding.textUserEmail.text = user.email
-        binding.textUserGrade.text = user.getAcademicInfo()
+        binding.textUserGrade.text = user.grade
+        binding.textUserSection.text = user.section ?: "Sin sección"
+        binding.textUserSchool.text = user.school ?: "Sin colegio"
 
         // En modo edición, llenar los campos
         binding.editTextName.setText(user.name)

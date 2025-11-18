@@ -55,6 +55,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/gray_400" />
 
+            <!-- GRADO como chip destacado -->
             <TextView
                 android:id="@+id/textUserGrade"
                 android:layout_width="wrap_content"
@@ -67,6 +68,40 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp" />
 
+            <!-- SECCIÓN y COLEGIO como texto informativo -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/textUserSection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/section_placeholder"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_400" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" • "
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_400"
+                    android:layout_marginHorizontal="4dp" />
+
+                <TextView
+                    android:id="@+id/textUserSchool"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/school_hint"
+                    android:textSize="12sp"
+                    android:textColor="@color/gray_400" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <!-- MODO VISUALIZACIÓN -->
@@ -76,105 +111,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Información académica -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/academic_information"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/grade"
-                            android:textStyle="bold"
-                            android:textColor="@color/gray_600" />
-
-                        <TextView
-                            android:id="@+id/textViewGrade"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/user_grade_placeholder"
-                            android:textColor="@color/black" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/section"
-                            android:textStyle="bold"
-                            android:textColor="@color/gray_600" />
-
-                        <TextView
-                            android:id="@+id/textViewSection"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/section_placeholder"
-                            android:textColor="@color/black" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/school"
-                            android:textStyle="bold"
-                            android:textColor="@color/gray_600" />
-
-                        <TextView
-                            android:id="@+id/textViewSchool"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/school_hint"
-                            android:textColor="@color/black" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Botones de acción -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
