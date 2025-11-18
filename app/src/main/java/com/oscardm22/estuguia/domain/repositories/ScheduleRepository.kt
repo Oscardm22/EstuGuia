@@ -11,4 +11,5 @@ interface ScheduleRepository {
     suspend fun getSchedulesByDayAndTurn(userId: String, dayOfWeek: Int, turn: Turn): Result<List<Schedule>>
     suspend fun updateSchedule(schedule: Schedule): Result<Boolean>
     suspend fun deleteSchedule(scheduleId: String): Result<Boolean>
+    suspend fun deleteAllSchedulesByUserId(userId: String)
 }

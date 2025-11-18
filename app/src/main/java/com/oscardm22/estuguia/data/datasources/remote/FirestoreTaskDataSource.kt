@@ -122,4 +122,21 @@ class FirestoreTaskDataSource @Inject constructor(
             0
         }
     }
+
+    suspend fun deleteAllTasksByUserId(userId: String) {
+        try {
+            // Obtener todas las tareas del usuario
+            val querySnapshot = firestore.collection(TASKS_COLLECTION)
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            // Eliminar cada tarea
+            for (document in querySnapshot.documents) {
+                document.reference.delete().await()
+            }
+        } catch (e: Exception) {
+            throw Exception("Error al eliminar tareas del usuario: ${e.message}")
+        }
+    }
 }

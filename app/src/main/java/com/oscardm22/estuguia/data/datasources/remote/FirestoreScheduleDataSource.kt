@@ -113,4 +113,21 @@ class FirestoreScheduleDataSource @Inject constructor(
     } catch (e: Exception) {
         Result.failure(e)
     }
+
+    suspend fun deleteAllSchedulesByUserId(userId: String) {
+        try {
+            // Obtener todos los horarios del usuario
+            val querySnapshot = firestore.collection(SCHEDULES_COLLECTION)
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+
+            // Eliminar cada horario
+            for (document in querySnapshot.documents) {
+                document.reference.delete().await()
+            }
+        } catch (e: Exception) {
+            throw Exception("Error al eliminar horarios del usuario: ${e.message}")
+        }
+    }
 }

@@ -106,6 +106,10 @@ class TaskRepositoryImpl @Inject constructor(
         return taskDataSource.getPendingTasksCount(userId)
     }
 
+    override suspend fun deleteAllTasksByUserId(userId: String) {
+        taskDataSource.deleteAllTasksByUserId(userId)
+    }
+
     // Extension functions para conversión
     private fun Task.toDto(userId: String): TaskDto {
         return TaskDto(

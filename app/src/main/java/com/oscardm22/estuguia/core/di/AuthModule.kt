@@ -1,8 +1,11 @@
 package com.oscardm22.estuguia.core.di
 
+import android.content.Context
 import com.oscardm22.estuguia.data.repositories.AuthRepositoryImpl
 import com.oscardm22.estuguia.data.datasources.remote.FirebaseAuthDataSource
 import com.oscardm22.estuguia.domain.repositories.AuthRepository
+import com.oscardm22.estuguia.domain.repositories.ScheduleRepository
+import com.oscardm22.estuguia.domain.repositories.TaskRepository
 import com.oscardm22.estuguia.domain.usecases.auth.LoginUseCase
 import dagger.Module
 import dagger.Provides
@@ -14,6 +17,7 @@ import com.oscardm22.estuguia.domain.usecases.auth.LogoutUseCase
 import com.oscardm22.estuguia.domain.usecases.auth.UpdatePasswordUseCase
 import com.oscardm22.estuguia.domain.usecases.auth.UpdateProfileUseCase
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -76,9 +80,12 @@ object AuthModule {
     @Provides
     @Singleton
     fun provideDeleteAccountUseCase(
-        authRepository: AuthRepository
+        authRepository: AuthRepository,
+        scheduleRepository: ScheduleRepository,
+        taskRepository: TaskRepository,
+        @ApplicationContext context: Context
     ): DeleteAccountUseCase {
-        return DeleteAccountUseCase(authRepository)
+        return DeleteAccountUseCase(authRepository, scheduleRepository, taskRepository, context)
     }
 
     @Provides

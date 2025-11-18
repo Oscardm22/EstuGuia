@@ -13,4 +13,5 @@ interface TaskRepository {
     suspend fun getTasksByStatus(status: TaskStatus, userId: String): Result<List<Task>>
     suspend fun getUpcomingTasks(userId: String, days: Int): Result<List<Task>>
     suspend fun getPendingTasksCount(userId: String): Int
+    suspend fun deleteAllTasksByUserId(userId: String)
 }

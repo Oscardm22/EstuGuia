@@ -8,12 +8,18 @@ import com.oscardm22.estuguia.presentation.features.auth.ui.activities.ForgotPas
 import com.oscardm22.estuguia.presentation.features.auth.ui.activities.LoginActivity
 import com.oscardm22.estuguia.presentation.features.auth.ui.activities.RegisterActivity
 import com.oscardm22.estuguia.presentation.features.main.ui.activities.MainActivity
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Maneja toda la navegación entre pantallas de autenticación
  * Centraliza intents, flags y transiciones
  */
-class AuthNavigation(private val context: Context) {
+@Singleton
+class AuthNavigation @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
 
     /**
      * Navega a la pantalla de Login

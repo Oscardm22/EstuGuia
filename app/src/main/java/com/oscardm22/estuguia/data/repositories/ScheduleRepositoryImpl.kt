@@ -48,4 +48,8 @@ class ScheduleRepositoryImpl @Inject constructor(
     override suspend fun deleteSchedule(scheduleId: String): Result<Boolean> {
         return scheduleDataSource.deleteSchedule(scheduleId)
     }
+
+    override suspend fun deleteAllSchedulesByUserId(userId: String) {
+        scheduleDataSource.deleteAllSchedulesByUserId(userId)
+    }
 }

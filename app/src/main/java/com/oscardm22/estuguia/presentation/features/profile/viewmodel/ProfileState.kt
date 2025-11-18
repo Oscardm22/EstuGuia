@@ -9,5 +9,6 @@ data class ProfileState(
     val isEditing: Boolean = false,
     val isLoggingOut: Boolean = false,
     val isDeletingAccount: Boolean = false,
-    val showPasswordDialog: Boolean = false
+    val showPasswordDialog: Boolean = false,
+    val shouldNavigateToLogin: Boolean = false
 )

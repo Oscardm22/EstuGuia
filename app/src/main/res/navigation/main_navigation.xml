@@ -89,7 +89,6 @@
         android:label="Agregar Tarea"
         tools:layout="@layout/fragment_add_task">
 
-        <!-- MUEVE EL ARGUMENTO DENTRO DEL FRAGMENT -->
         <argument
             android:name="task"
             app:argType="com.oscardm22.estuguia.domain.models.Task"

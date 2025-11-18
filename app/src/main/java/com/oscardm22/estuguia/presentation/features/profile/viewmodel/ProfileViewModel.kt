@@ -109,7 +109,10 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 logoutUseCase()
-                _state.update { it.copy(isLoggingOut = false) }
+                _state.update { it.copy(
+                    isLoggingOut = false,
+                    shouldNavigateToLogin = true
+                ) }
             } catch (e: Exception) {
                 _state.update { it.copy(
                     error = "Error durante el cierre de sesión",
@@ -125,7 +128,12 @@ class ProfileViewModel @Inject constructor(
             try {
                 val result = deleteAccountUseCase()
                 if (result.isSuccess) {
-                    _state.update { it.copy(isDeletingAccount = false) }
+                    _state.update {
+                        it.copy(
+                            isDeletingAccount = false,
+                            shouldNavigateToLogin = true
+                        )
+                    }
                 } else {
                     _state.update { it.copy(
                         error = result.exceptionOrNull()?.message ?: "Error eliminando cuenta",
@@ -151,5 +159,9 @@ class ProfileViewModel @Inject constructor(
 
     fun clearError() {
         _state.update { it.copy(error = null) }
+    }
+
+    fun resetNavigation() {
+        _state.update { it.copy(shouldNavigateToLogin = false) }
     }
 }

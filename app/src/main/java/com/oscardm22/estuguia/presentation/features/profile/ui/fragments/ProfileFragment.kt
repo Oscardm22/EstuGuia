@@ -11,12 +11,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.oscardm22.estuguia.R
+import com.oscardm22.estuguia.core.navigation.AuthNavigation
 import com.oscardm22.estuguia.databinding.FragmentProfileBinding
 import com.oscardm22.estuguia.domain.models.User
 import com.oscardm22.estuguia.presentation.features.profile.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -24,6 +26,9 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels()
+
+    @Inject
+    lateinit var authNavigation: AuthNavigation
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +53,6 @@ class ProfileFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collectLatest { state ->
                     binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-                    binding.logoutProgress.visibility = if (state.isLoggingOut) View.VISIBLE else View.GONE
                     binding.deleteAccountProgress.visibility = if (state.isDeletingAccount) View.VISIBLE else View.GONE
 
                     state.user?.let { user ->
@@ -70,9 +74,18 @@ class ProfileFragment : Fragment() {
                     if (state.showPasswordDialog) {
                         showPasswordDialog()
                     }
+
+                    if (state.shouldNavigateToLogin) {
+                        navigateToLogin()
+                        viewModel.resetNavigation()
+                    }
                 }
             }
         }
+    }
+
+    private fun navigateToLogin() {
+        authNavigation.navigateToLogin(clearTask = true)
     }
 
     private fun setupClickListeners() {
@@ -90,10 +103,6 @@ class ProfileFragment : Fragment() {
 
         binding.btnChangePassword.setOnClickListener {
             viewModel.setShowPasswordDialog(true)
-        }
-
-        binding.btnLogout.setOnClickListener {
-            showLogoutConfirmation()
         }
 
         binding.btnDeleteAccount.setOnClickListener {
@@ -175,34 +184,18 @@ class ProfileFragment : Fragment() {
         dialog.show()
     }
 
-    private fun showLogoutConfirmation() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.logout))
-            .setMessage(getString(R.string.logout_confirmation_message))
-            .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                viewModel.logout()
-                // Navegar a login
-                // findNavController().navigate(R.id.action_profileFragment_to_loginActivity)
-            }
-            .setNegativeButton(getString(R.string.cancel), null)
-            .show()
-    }
-
     private fun showDeleteAccountConfirmation() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.delete_account))
-            .setMessage(getString(R.string.delete_account_confirmation_message))
-            .setPositiveButton(getString(R.string.delete)) { _, _ ->
+            .setMessage("¿Estás seguro de eliminar tu cuenta? Esta acción:\n\n• Eliminará tu cuenta permanentemente\n• Borrará todos tus horarios de clase\n• Eliminará todas tus tareas y recordatorios\n\n⚠️ Esta acción NO se puede deshacer")
+            .setPositiveButton("Eliminar Todo") { _, _ ->
                 viewModel.deleteAccount()
-                // Navegar a login
-                // findNavController().navigate(R.id.action_profileFragment_to_loginActivity)
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
     private fun showError(message: String) {
-        // Mostrar snackbar con el error
         com.google.android.material.snackbar.Snackbar.make(binding.root, message, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
         viewModel.clearError()
     }
