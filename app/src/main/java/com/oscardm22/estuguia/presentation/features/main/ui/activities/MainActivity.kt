@@ -109,9 +109,6 @@ class MainActivity : AppCompatActivity() {
                 logout()
                 true
             }
-            R.id.action_settings -> {
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
     }
