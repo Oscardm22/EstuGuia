@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.oscardm22.estuguia.domain.usecases.auth.LoginUseCase
 import com.oscardm22.estuguia.domain.usecases.auth.RegisterUseCase
 import com.oscardm22.estuguia.domain.usecases.auth.SendPasswordResetUseCase
@@ -44,9 +47,10 @@ class AuthViewModel @Inject constructor(
                     )
                 },
                 onFailure = { error ->
+                    val errorMessage = handleLoginError(error)
                     _loginState.value = LoginState(
                         isError = true,
-                        errorMessage = error.message ?: "Error desconocido en login"
+                        errorMessage = errorMessage
                     )
                 }
             )
@@ -77,12 +81,29 @@ class AuthViewModel @Inject constructor(
                     )
                 },
                 onFailure = { error ->
+                    val errorMessage = handleRegisterError(error)
                     _registerState.value = RegisterState(
                         isError = true,
-                        errorMessage = error.message ?: "Error desconocido en registro"
+                        errorMessage = errorMessage
                     )
                 }
             )
+        }
+    }
+
+    private fun handleLoginError(exception: Throwable): String {
+        return when (exception) {
+            is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo electrónico"
+            is FirebaseAuthInvalidCredentialsException -> "Contraseña incorrecta"
+            else -> "Error al iniciar sesión. Por favor verifica tus credenciales"
+        }
+    }
+
+    private fun handleRegisterError(exception: Throwable): String {
+        return when (exception) {
+            is FirebaseAuthUserCollisionException -> "Ya existe una cuenta con este correo electrónico"
+            is FirebaseAuthInvalidCredentialsException -> "La contraseña debe tener al menos 6 caracteres"
+            else -> "Error al crear la cuenta. Por favor intenta nuevamente"
         }
     }
 
