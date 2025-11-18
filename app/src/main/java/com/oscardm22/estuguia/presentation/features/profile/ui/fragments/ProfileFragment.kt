@@ -182,6 +182,8 @@ class ProfileFragment : Fragment() {
             .create()
 
         dialog.show()
+
+        viewModel.setShowPasswordDialog(false)
     }
 
     private fun showDeleteAccountConfirmation() {
