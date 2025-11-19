@@ -129,6 +129,78 @@
                 android:textColor="@color/white"
                 android:layout_marginBottom="8dp" />
 
+            <!-- SELECTOR DE DÍAS -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupDays"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:singleSelection="true"
+                app:selectionRequired="true"
+                app:chipSpacing="8dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAll"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/all"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:checkedIcon="@null" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMonday"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/monday"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:checkedIcon="@null" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipTuesday"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tuesday"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:checkedIcon="@null" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipWednesday"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wednesday"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:checkedIcon="@null" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipThursday"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/thursday"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:checkedIcon="@null" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipFriday"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/friday"
+                    android:textColor="@color/black"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    app:checkedIcon="@null" />
+
+            </com.google.android.material.chip.ChipGroup>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewSchedules"
                 android:layout_width="match_parent"

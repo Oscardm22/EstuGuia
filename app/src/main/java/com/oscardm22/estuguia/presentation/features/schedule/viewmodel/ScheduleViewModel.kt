@@ -27,6 +27,11 @@ class ScheduleViewModel @Inject constructor(
     private val _scheduleState = MutableStateFlow(ScheduleState())
     val scheduleState: StateFlow<ScheduleState> = _scheduleState.asStateFlow()
 
+    private val _filteredSchedules = MutableStateFlow<List<Schedule>>(emptyList())
+    val filteredSchedules: StateFlow<List<Schedule>> = _filteredSchedules.asStateFlow()
+
+    private val _selectedDay = MutableStateFlow<String?>(null)
+
     fun getSchedules() {
         viewModelScope.launch {
             _scheduleState.value = _scheduleState.value.copy(isLoading = true, error = null)
@@ -44,20 +49,50 @@ class ScheduleViewModel @Inject constructor(
             if (result.isSuccess) {
                 val schedules = result.getOrDefault(emptyList())
                 val sortedSchedules = sortSchedules(schedules)
-                val stats = calculateStats(schedules) // Calcular estadísticas
+                val stats = calculateStats(schedules)
 
                 _scheduleState.value = _scheduleState.value.copy(
                     isLoading = false,
                     schedules = sortedSchedules,
-                    stats = stats, // Actualizar estadísticas
+                    stats = stats,
                     error = null
                 )
+
+                // APLICAR FILTRO ACTUAL DESPUÉS DE CARGAR - AGREGAR ESTA LINEA
+                applyDayFilter(sortedSchedules, _selectedDay.value)
             } else {
                 _scheduleState.value = _scheduleState.value.copy(
                     isLoading = false,
                     error = result.exceptionOrNull()?.message ?: "Error al cargar horarios"
                 )
             }
+        }
+    }
+
+    fun filterSchedulesByDay(day: String?) {
+        _selectedDay.value = day
+        applyDayFilter(_scheduleState.value.schedules, day)
+    }
+
+    private fun applyDayFilter(allSchedules: List<Schedule>, day: String?) {
+        val filtered = if (day == null) {
+            allSchedules
+        } else {
+            // Convertir el nombre del día a número para comparar
+            val dayNumber = dayNameToNumber(day)
+            allSchedules.filter { it.dayOfWeek == dayNumber }
+        }
+        _filteredSchedules.value = filtered
+    }
+
+    private fun dayNameToNumber(dayName: String): Int {
+        return when (dayName) {
+            "Lunes" -> 1
+            "Martes" -> 2
+            "Miércoles" -> 3
+            "Jueves" -> 4
+            "Viernes" -> 5
+            else -> -1
         }
     }
 
@@ -76,13 +111,10 @@ class ScheduleViewModel @Inject constructor(
     private fun sortSchedules(schedules: List<Schedule>): List<Schedule> {
         return schedules.sortedWith(
             compareBy<Schedule> { schedule ->
-
                 schedule.dayOfWeek
             }.thenBy { schedule ->
-
                 schedule.startTime
             }.thenBy { schedule ->
-
                 schedule.courseName
             }
         )

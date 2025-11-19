@@ -20,6 +20,7 @@ import com.oscardm22.estuguia.presentation.features.schedule.viewmodel.ScheduleS
 import com.oscardm22.estuguia.presentation.features.schedule.viewmodel.ScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.core.view.isVisible
 
 @AndroidEntryPoint
 class ScheduleFragment : Fragment() {
@@ -43,6 +44,7 @@ class ScheduleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupDaySelector()
         setupObservers()
         setupClickListeners()
 
@@ -73,10 +75,15 @@ class ScheduleFragment : Fragment() {
                     state.isLoading -> showLoading()
                     state.error != null -> showError(state.error)
                     else -> {
-                        showSchedules(state.schedules)
                         updateStats(state.stats)
                     }
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.filteredSchedules.collect { filteredSchedules ->
+                showSchedules(filteredSchedules)
             }
         }
     }
@@ -108,7 +115,13 @@ class ScheduleFragment : Fragment() {
         if (schedules.isEmpty()) {
             binding.recyclerViewSchedules.visibility = View.GONE
             binding.textEmpty.visibility = View.VISIBLE
-            binding.textEmpty.text = getString(R.string.no_schedules)
+
+            val isFiltered = binding.chipGroupDays.checkedChipId != R.id.chipAll
+            binding.textEmpty.text = if (isFiltered) {
+                "No hay clases para este día"
+            } else {
+                getString(R.string.no_schedules)
+            }
         } else {
             binding.recyclerViewSchedules.visibility = View.VISIBLE
             binding.textEmpty.visibility = View.GONE
@@ -157,5 +170,26 @@ class ScheduleFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupDaySelector() {
+        binding.chipGroupDays.setOnCheckedStateChangeListener { group, checkedIds ->
+            when (checkedIds.firstOrNull()) {
+                R.id.chipAll -> {
+                    viewModel.filterSchedulesByDay(null)
+                    if (binding.textEmpty.isVisible) {
+                        binding.textEmpty.text = getString(R.string.no_schedules)
+                    }
+                }
+                R.id.chipMonday -> viewModel.filterSchedulesByDay("Lunes")
+                R.id.chipTuesday -> viewModel.filterSchedulesByDay("Martes")
+                R.id.chipWednesday -> viewModel.filterSchedulesByDay("Miércoles")
+                R.id.chipThursday -> viewModel.filterSchedulesByDay("Jueves")
+                R.id.chipFriday -> viewModel.filterSchedulesByDay("Viernes")
+            }
+        }
+
+        // Seleccionar "Todos" por defecto
+        binding.chipAll.isChecked = true
     }
 }
