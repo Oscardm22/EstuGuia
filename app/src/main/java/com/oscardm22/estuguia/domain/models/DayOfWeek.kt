@@ -8,12 +8,8 @@ enum class DayOfWeek(val displayName: String, val index: Int) {
     FRIDAY("Viernes", 5);
 
     companion object {
-        fun fromIndex(index: Int): DayOfWeek {
-            return DayOfWeek.entries.find { it.index == index } ?: MONDAY
-        }
-
-        fun getWeekdays(): List<DayOfWeek> {
-            return listOf(MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY)
+        fun fromDisplayName(displayName: String): DayOfWeek {
+            return entries.find { it.displayName == displayName } ?: MONDAY
         }
     }
 }

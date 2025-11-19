@@ -3,6 +3,7 @@ package com.oscardm22.estuguia.presentation.features.schedule.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.oscardm22.estuguia.domain.models.DayOfWeek
 import com.oscardm22.estuguia.domain.models.Schedule
 import com.oscardm22.estuguia.domain.usecases.schedule.AddScheduleUseCase
 import com.oscardm22.estuguia.domain.usecases.schedule.DeleteScheduleUseCase
@@ -78,22 +79,10 @@ class ScheduleViewModel @Inject constructor(
         val filtered = if (day == null) {
             allSchedules
         } else {
-            // Convertir el nombre del día a número para comparar
-            val dayNumber = dayNameToNumber(day)
-            allSchedules.filter { it.dayOfWeek == dayNumber }
+            val dayEnum = DayOfWeek.fromDisplayName(day)
+            allSchedules.filter { it.dayOfWeek == dayEnum.index }
         }
         _filteredSchedules.value = filtered
-    }
-
-    private fun dayNameToNumber(dayName: String): Int {
-        return when (dayName) {
-            "Lunes" -> 1
-            "Martes" -> 2
-            "Miércoles" -> 3
-            "Jueves" -> 4
-            "Viernes" -> 5
-            else -> -1
-        }
     }
 
     private fun calculateStats(schedules: List<Schedule>): ScheduleStats {

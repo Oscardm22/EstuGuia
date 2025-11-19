@@ -96,17 +96,6 @@ class FirestoreTaskDataSource @Inject constructor(
             .toObjects(TaskDto::class.java)
     }
 
-    suspend fun getTasksByDateRange(userId: String, startDate: Date, endDate: Date): List<TaskDto> {
-        return firestore.collection(TASKS_COLLECTION)
-            .whereEqualTo("userId", userId)
-            .whereGreaterThanOrEqualTo("dueDate", startDate)
-            .whereLessThanOrEqualTo("dueDate", endDate)
-            .orderBy("dueDate", Query.Direction.ASCENDING)
-            .get()
-            .await()
-            .toObjects(TaskDto::class.java)
-    }
-
     suspend fun getPendingTasksCount(userId: String): Int {
         return try {
             val query = firestore.collection(TASKS_COLLECTION)

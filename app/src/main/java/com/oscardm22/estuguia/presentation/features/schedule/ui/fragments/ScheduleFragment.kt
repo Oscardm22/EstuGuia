@@ -21,6 +21,7 @@ import com.oscardm22.estuguia.presentation.features.schedule.viewmodel.ScheduleV
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import androidx.core.view.isVisible
+import com.oscardm22.estuguia.domain.models.DayOfWeek
 
 @AndroidEntryPoint
 class ScheduleFragment : Fragment() {
@@ -181,11 +182,11 @@ class ScheduleFragment : Fragment() {
                         binding.textEmpty.text = getString(R.string.no_schedules)
                     }
                 }
-                R.id.chipMonday -> viewModel.filterSchedulesByDay("Lunes")
-                R.id.chipTuesday -> viewModel.filterSchedulesByDay("Martes")
-                R.id.chipWednesday -> viewModel.filterSchedulesByDay("Miércoles")
-                R.id.chipThursday -> viewModel.filterSchedulesByDay("Jueves")
-                R.id.chipFriday -> viewModel.filterSchedulesByDay("Viernes")
+                R.id.chipMonday -> viewModel.filterSchedulesByDay(DayOfWeek.MONDAY.displayName)
+                R.id.chipTuesday -> viewModel.filterSchedulesByDay(DayOfWeek.TUESDAY.displayName)
+                R.id.chipWednesday -> viewModel.filterSchedulesByDay(DayOfWeek.WEDNESDAY.displayName)
+                R.id.chipThursday -> viewModel.filterSchedulesByDay(DayOfWeek.THURSDAY.displayName)
+                R.id.chipFriday -> viewModel.filterSchedulesByDay(DayOfWeek.FRIDAY.displayName)
             }
         }
 
