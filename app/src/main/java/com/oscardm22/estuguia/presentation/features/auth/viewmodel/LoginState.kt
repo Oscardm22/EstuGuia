@@ -11,9 +11,4 @@ data class LoginState(
     val isError: Boolean = false,
     val errorMessage: String? = null,
     val user: User? = null
-) {
-    /**
-     * Verifica si el login fue exitoso
-     */
-    fun isLoginSuccessful(): Boolean = isSuccess && user != null
-}
+)

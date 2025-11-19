@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.oscardm22.estuguia.domain.models.User
 import com.oscardm22.estuguia.domain.usecases.auth.DeleteAccountUseCase
 import com.oscardm22.estuguia.domain.usecases.auth.GetCurrentUserProfileUseCase
-import com.oscardm22.estuguia.domain.usecases.auth.LogoutUseCase
 import com.oscardm22.estuguia.domain.usecases.auth.UpdatePasswordUseCase
 import com.oscardm22.estuguia.domain.usecases.auth.UpdateProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +21,6 @@ class ProfileViewModel @Inject constructor(
     private val updateProfileUseCase: UpdateProfileUseCase,
     private val updatePasswordUseCase: UpdatePasswordUseCase,
     private val deleteAccountUseCase: DeleteAccountUseCase,
-    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileState())
@@ -99,24 +97,6 @@ class ProfileViewModel @Inject constructor(
                 _state.update { it.copy(
                     error = e.message ?: "Error desconocido",
                     isLoading = false
-                ) }
-            }
-        }
-    }
-
-    fun logout() {
-        _state.update { it.copy(isLoggingOut = true) }
-        viewModelScope.launch {
-            try {
-                logoutUseCase()
-                _state.update { it.copy(
-                    isLoggingOut = false,
-                    shouldNavigateToLogin = true
-                ) }
-            } catch (e: Exception) {
-                _state.update { it.copy(
-                    error = "Error durante el cierre de sesión",
-                    isLoggingOut = false
                 ) }
             }
         }

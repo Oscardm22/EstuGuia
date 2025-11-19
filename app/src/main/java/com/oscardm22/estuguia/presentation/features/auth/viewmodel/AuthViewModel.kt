@@ -113,20 +113,4 @@ class AuthViewModel @Inject constructor(
             callback(result)
         }
     }
-
-    // Métodos para limpiar estados
-    fun clearLoginState() {
-        _loginState.value = LoginState()
-    }
-
-    fun clearRegisterState() {
-        _registerState.value = RegisterState()
-    }
-
-    // Resetear todos los estados
-    fun resetAllStates() {
-        _loginState.value = LoginState()
-        _registerState.value = RegisterState()
-        _isLoading.value = false
-    }
 }

@@ -11,9 +11,4 @@ data class RegisterState(
     val isError: Boolean = false,
     val errorMessage: String? = null,
     val user: User? = null
-) {
-    /**
-     * Verifica si el registro fue exitoso
-     */
-    fun isRegisterSuccessful(): Boolean = isSuccess && user != null
-}
+)
