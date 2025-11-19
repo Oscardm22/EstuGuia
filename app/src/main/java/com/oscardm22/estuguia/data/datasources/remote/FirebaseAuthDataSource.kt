@@ -76,7 +76,7 @@ class FirebaseAuthDataSource @Inject constructor(
                         id = user.uid,
                         email = user.email ?: "",
                         name = user.displayName ?: "",
-                        grade = "", // Podemos cargar esto después
+                        grade = "",
                         section = null,
                         school = null,
                         profileImage = user.photoUrl?.toString(),
@@ -174,27 +174,20 @@ class FirebaseAuthDataSource @Inject constructor(
             val user = firebaseAuth.currentUser
                 ?: throw Exception("No hay usuario autenticado")
 
-            println("🔥 FirebaseAuthDataSource - Eliminando usuario: ${user.uid}")
-
             // 1. Eliminar de Firestore
             firestore.collection("users")
                 .document(user.uid)
                 .delete()
                 .await()
-            println("🗑️ FirebaseAuthDataSource - Usuario eliminado de Firestore")
 
             // 2. Eliminar de Firebase Auth
             user.delete().await()
-            println("🔥 FirebaseAuthDataSource - Usuario eliminado de Firebase Auth")
 
-            // 3. ✅ CERRAR SESIÓN (ESTO FALTA)
+            // 3. CERRAR SESIÓN
             firebaseAuth.signOut()
-            println("🚪 FirebaseAuthDataSource - Sesión cerrada")
 
-            println("✅ FirebaseAuthDataSource - Eliminación COMPLETA exitosa")
             true
         } catch (e: Exception) {
-            println("❌ FirebaseAuthDataSource - Error eliminando cuenta: ${e.message}")
             false
         }
     }

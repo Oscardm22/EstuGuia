@@ -93,22 +93,4 @@ class AuthNavigation @Inject constructor(
             context.startActivity(intent)
         }
     }
-
-    /**
-     * Cierra la actividad actual
-     */
-    fun finishCurrentActivity() {
-        if (context is Activity) {
-            context.finish()
-        }
-    }
-
-    /**
-     * Navega hacia atrás
-     */
-    fun navigateBack() {
-        if (context is Activity) {
-            context.finish()
-        }
-    }
 }
