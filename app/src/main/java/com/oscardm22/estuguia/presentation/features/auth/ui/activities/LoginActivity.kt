@@ -21,7 +21,10 @@ import com.oscardm22.estuguia.presentation.features.auth.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.oscardm22.estuguia.presentation.features.main.ui.activities.MainActivity
 import android.content.Intent
+import androidx.lifecycle.lifecycleScope
+import com.oscardm22.estuguia.domain.usecases.auth.LoginUseCase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -35,6 +38,9 @@ class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
+
+    @Inject
+    lateinit var loginUseCase: LoginUseCase
 
     private lateinit var emailEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
@@ -73,15 +79,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun checkCurrentUser() {
-        val currentUser = firebaseAuth.currentUser
-        if (currentUser != null) {
-            // Usuario ya está logueado, redirigir directamente a MainActivity
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+        lifecycleScope.launch {
+            try {
+                val isUserLoggedIn = loginUseCase.isUserAlreadyLoggedIn()
+                if (isUserLoggedIn) {
+                    // Usuario ya está logueado, redirigir directamente a MainActivity
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
-        // Si no hay usuario, continuar con el login normal
     }
 
     private fun initializeViews() {
